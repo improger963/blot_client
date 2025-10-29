@@ -1,27 +1,35 @@
 // src/hooks/useTelegram.ts
 
-import { useMemo } from 'react';
+import { useEffect, useState } from 'react';
+import type { ITelegramWebApp } from '../types/telegram';
 
 /**
  * @description Кастомный хук для инкапсуляции работы с объектом Telegram Web App.
- * Предоставляет безопасный доступ к данным и определяет окружение.
+ * Корректно обрабатывает асинхронную инициализацию скрипта Telegram.
  * @returns {object} Объект с данными и флагами Telegram.
  */
 export const useTelegram = () => {
-    // Получаем объект WebApp один раз и мемоизируем его, чтобы избежать лишних обращений к window
-    const webApp = useMemo(() => window.Telegram?.WebApp, []);
+    // Используем состояние, чтобы хранить объект webApp, когда он станет доступен.
+    const [webApp, setWebApp] = useState<ITelegramWebApp | null>(null);
 
-    // Определяем, находимся ли мы в окружении Telegram
+    useEffect(() => {
+        // Проверяем наличие window.Telegram.WebApp при монтировании компонента.
+        // Скрипт может загрузиться до того, как React начнет рендеринг.
+        if (window.Telegram?.WebApp) {
+            const app = window.Telegram.WebApp;
+            setWebApp(app);
+            // Уведомляем Telegram, что приложение готово.
+            app.ready();
+        }
+        // В некоторых редких случаях может потребоваться небольшая задержка,
+        // но обычно прямой проверки достаточно.
+    }, []); // Пустой массив зависимостей гарантирует, что эффект выполнится один раз.
+
     const isTelegramEnv = !!webApp?.initData;
-
-    // Уведомляем Telegram, что наше приложение готово к работе, если мы в его окружении
-    if (isTelegramEnv) {
-        webApp.ready();
-    }
 
     return {
         /**
-         * @description Объект Telegram Web App.
+         * @description Объект Telegram Web App. Будет `null` до инициализации.
          */
         webApp,
         /**
@@ -29,12 +37,16 @@ export const useTelegram = () => {
          */
         isTelegramEnv,
         /**
-         * @description Данные для инициализации, используемые для аутентификации.
+         * @description Данные для инициализации. Будут `undefined` до инициализации.
          */
         initData: webApp?.initData,
         /**
-         * @description "Небезопасные" данные, включая объект пользователя, для отображения в UI.
+         * @description "Небезопасные" данные пользователя.
          */
         user: webApp?.initDataUnsafe.user,
+        /**
+         * @description Флаг, показывающий, что хук все еще ожидает инициализации webApp.
+         */
+        isReady: webApp !== null,
     };
 };
