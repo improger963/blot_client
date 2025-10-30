@@ -120,7 +120,7 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // API base URL - CHANGE THIS TO YOUR API URL
+    // API base URL
     const API_URL = 'https://undeclaimed-nonscheduled-jarrod.ngrok-free.dev/api';
 
     // Display user info from Telegram WebApp
@@ -130,9 +130,9 @@
 
       if (user) {
         userInfoDiv.innerHTML = `
-                    <div class="label">Telegram User Data:</div>
-                    <pre>${JSON.stringify(user, null, 2)}</pre>
-                `;
+          <div class="label">Telegram User Data:</div>
+          <pre>${JSON.stringify(user, null, 2)}</pre>
+        `;
       } else {
         userInfoDiv.innerHTML = '<span class="error">⚠️ No user data available. Open this page in Telegram Mini App.</span>';
       }
@@ -141,14 +141,20 @@
     // Display debug info
     function displayDebugInfo() {
       const debugDiv = document.getElementById('debugInfo');
+      const initDataPreview = tg.initData ? tg.initData.substring(0, 200) + '...' : 'No init data';
+      
       debugDiv.innerHTML = `
-                <div class="label">Init Data:</div>
-                <pre>${tg.initData || 'No init data'}</pre>
-                <div class="label">Platform:</div>
-                <pre>${tg.platform}</pre>
-                <div class="label">Version:</div>
-                <pre>${tg.version}</pre>
-            `;
+        <div class="label">Init Data (preview):</div>
+        <pre>${initDataPreview}</pre>
+        <div class="label">Init Data Length:</div>
+        <pre>${tg.initData?.length || 0} characters</pre>
+        <div class="label">Platform:</div>
+        <pre>${tg.platform}</pre>
+        <div class="label">Version:</div>
+        <pre>${tg.version}</pre>
+        <div class="label">Is Valid:</div>
+        <pre>${!!tg.initData}</pre>
+      `;
     }
 
     // Show response
@@ -156,10 +162,10 @@
       const responseDiv = document.getElementById('response');
       const className = isError ? 'error' : 'success';
       responseDiv.innerHTML = `
-                <div class="${className}">
-                    <pre>${JSON.stringify(data, null, 2)}</pre>
-                </div>
-            `;
+        <div class="${className}">
+          <pre>${JSON.stringify(data, null, 2)}</pre>
+        </div>
+      `;
     }
 
     // Authenticate user
@@ -167,37 +173,22 @@
       try {
         showResponse({ status: 'Authenticating...' });
 
-        // Parse initData
+        // Get initData from Telegram WebApp
         const initData = tg.initData;
+        
         if (!initData) {
           throw new Error('No init data. Please open in Telegram Mini App.');
         }
 
-        const params = new URLSearchParams(initData);
-        const userStr = params.get('user');
-        if (!userStr) {
-          throw new Error('No user data in init data');
-        }
+        console.log('Init data length:', initData.length);
+        console.log('Init data preview:', initData.substring(0, 100));
 
-        const user = JSON.parse(userStr);
-        const authDate = params.get('auth_date');
-        const hash = params.get('hash');
-
-        // Prepare request data
+        // ✅ ВАЖНО: Отправляем ТОЛЬКО initData, без изменений!
         const requestData = {
-          initData: initData,
-          id: user.id,
-          first_name: user.first_name,
-          last_name: user.last_name,
-          username: user.username,
-          photo_url: user.photo_url,
-          language_code: user.language_code,
-          is_premium: user.is_premium || false,
-          auth_date: parseInt(authDate),
-          hash: hash,
+          initData: initData
         };
 
-        console.log('Sending auth request:', requestData);
+        console.log('Sending auth request with initData only');
 
         const response = await fetch(`${API_URL}/auth/telegram/callback`, {
           method: 'POST',
@@ -205,14 +196,14 @@
             'Content-Type': 'application/json',
             'Accept': 'application/json',
           },
+          credentials: 'include', // Important for cookies
           body: JSON.stringify(requestData),
         });
 
         const data = await response.json();
+        console.log('Auth response:', data);
 
         if (response.ok) {
-          // Save token
-          localStorage.setItem('auth_token', data.token);
           showResponse(data);
 
           // Enable protected actions
@@ -231,22 +222,17 @@
       }
     }
 
-    // Get user profile
+    // Get user profile (example protected endpoint)
     async function getProfile() {
       try {
         showResponse({ status: 'Loading profile...' });
 
-        const token = localStorage.getItem('auth_token');
-        if (!token) {
-          throw new Error('No auth token. Please authenticate first.');
-        }
-
-        const response = await fetch(`${API_URL}/auth/me`, {
+        const response = await fetch(`${API_URL}/user`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
             'Accept': 'application/json',
           },
+          credentials: 'include', // Use session cookie
         });
 
         const data = await response.json();
@@ -256,9 +242,9 @@
         } else {
           showResponse(data, true);
           if (response.status === 401) {
-            localStorage.removeItem('auth_token');
             document.getElementById('profileBtn').disabled = true;
             document.getElementById('logoutBtn').disabled = true;
+            tg.showAlert('❌ Session expired. Please authenticate again.');
           }
         }
       } catch (error) {
@@ -272,23 +258,17 @@
       try {
         showResponse({ status: 'Logging out...' });
 
-        const token = localStorage.getItem('auth_token');
-        if (!token) {
-          throw new Error('No auth token.');
-        }
-
         const response = await fetch(`${API_URL}/auth/logout`, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${token}`,
             'Accept': 'application/json',
           },
+          credentials: 'include',
         });
 
         const data = await response.json();
 
         if (response.ok) {
-          localStorage.removeItem('auth_token');
           showResponse(data);
 
           // Disable protected actions
@@ -306,12 +286,24 @@
     }
 
     // Check if user is already authenticated
-    function checkAuth() {
-      const token = localStorage.getItem('auth_token');
-      if (token) {
-        document.getElementById('profileBtn').disabled = false;
-        document.getElementById('logoutBtn').disabled = false;
-        showResponse({ status: 'Already authenticated', token: token });
+    async function checkAuth() {
+      try {
+        const response = await fetch(`${API_URL}/user`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+          },
+          credentials: 'include',
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('profileBtn').disabled = false;
+          document.getElementById('logoutBtn').disabled = false;
+          showResponse({ status: 'Already authenticated', user: data });
+        }
+      } catch (error) {
+        console.log('Not authenticated');
       }
     }
 
