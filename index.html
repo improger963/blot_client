@@ -1,4 +1,4 @@
-<!doctype html>
+<!-- <!doctype html>
 <html lang="en">
 
 <head>
@@ -12,6 +12,316 @@
 <body>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
+</body>
+
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram Mini App Auth Test</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background: var(--tg-theme-bg-color, #fff);
+      color: var(--tg-theme-text-color, #000);
+    }
+
+    .container {
+      background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      background: var(--tg-theme-button-color, #0088cc);
+      color: var(--tg-theme-button-text-color, #fff);
+      border: none;
+      border-radius: 8px;
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 10px;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .success {
+      color: #4CAF50;
+    }
+
+    .error {
+      color: #f44336;
+    }
+
+    pre {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 8px;
+      overflow-x: auto;
+      font-size: 12px;
+      color: #333;
+    }
+
+    .info {
+      font-size: 14px;
+      margin: 10px 0;
+    }
+
+    .label {
+      font-weight: bold;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🔐 Telegram Mini App Auth Test</h1>
+
+  <div class="container">
+    <h2>User Info</h2>
+    <div id="userInfo" class="info">Loading...</div>
+  </div>
+
+  <div class="container">
+    <h2>Actions</h2>
+    <button onclick="authenticate()">🚀 Authenticate</button>
+    <button onclick="getProfile()" id="profileBtn" disabled>👤 Get My Profile</button>
+    <button onclick="logout()" id="logoutBtn" disabled>🚪 Logout</button>
+  </div>
+
+  <div class="container">
+    <h2>Response</h2>
+    <div id="response"></div>
+  </div>
+
+  <div class="container">
+    <h2>Debug Info</h2>
+    <div id="debugInfo"></div>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    // API base URL - CHANGE THIS TO YOUR API URL
+    const API_URL = window.location.origin + '/api';
+
+    // Display user info from Telegram WebApp
+    function displayUserInfo() {
+      const user = tg.initDataUnsafe?.user;
+      const userInfoDiv = document.getElementById('userInfo');
+
+      if (user) {
+        userInfoDiv.innerHTML = `
+                    <div class="label">Telegram User Data:</div>
+                    <pre>${JSON.stringify(user, null, 2)}</pre>
+                `;
+      } else {
+        userInfoDiv.innerHTML = '<span class="error">⚠️ No user data available. Open this page in Telegram Mini App.</span>';
+      }
+    }
+
+    // Display debug info
+    function displayDebugInfo() {
+      const debugDiv = document.getElementById('debugInfo');
+      debugDiv.innerHTML = `
+                <div class="label">Init Data:</div>
+                <pre>${tg.initData || 'No init data'}</pre>
+                <div class="label">Platform:</div>
+                <pre>${tg.platform}</pre>
+                <div class="label">Version:</div>
+                <pre>${tg.version}</pre>
+            `;
+    }
+
+    // Show response
+    function showResponse(data, isError = false) {
+      const responseDiv = document.getElementById('response');
+      const className = isError ? 'error' : 'success';
+      responseDiv.innerHTML = `
+                <div class="${className}">
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                </div>
+            `;
+    }
+
+    // Authenticate user
+    async function authenticate() {
+      try {
+        showResponse({ status: 'Authenticating...' });
+
+        // Parse initData
+        const initData = tg.initData;
+        if (!initData) {
+          throw new Error('No init data. Please open in Telegram Mini App.');
+        }
+
+        const params = new URLSearchParams(initData);
+        const userStr = params.get('user');
+        if (!userStr) {
+          throw new Error('No user data in init data');
+        }
+
+        const user = JSON.parse(userStr);
+        const authDate = params.get('auth_date');
+        const hash = params.get('hash');
+
+        // Prepare request data
+        const requestData = {
+          id: user.id,
+          first_name: user.first_name,
+          last_name: user.last_name,
+          username: user.username,
+          photo_url: user.photo_url,
+          language_code: user.language_code,
+          is_premium: user.is_premium || false,
+          auth_date: parseInt(authDate),
+          hash: hash,
+        };
+
+        console.log('Sending auth request:', requestData);
+
+        const response = await fetch(`${API_URL}/auth/telegram/callback`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify(requestData),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Save token
+          localStorage.setItem('auth_token', data.token);
+          showResponse(data);
+
+          // Enable protected actions
+          document.getElementById('profileBtn').disabled = false;
+          document.getElementById('logoutBtn').disabled = false;
+
+          tg.showAlert('✅ Authentication successful!');
+        } else {
+          showResponse(data, true);
+          tg.showAlert('❌ Authentication failed: ' + (data.message || 'Unknown error'));
+        }
+      } catch (error) {
+        console.error('Authentication error:', error);
+        showResponse({ error: error.message }, true);
+        tg.showAlert('❌ Error: ' + error.message);
+      }
+    }
+
+    // Get user profile
+    async function getProfile() {
+      try {
+        showResponse({ status: 'Loading profile...' });
+
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          throw new Error('No auth token. Please authenticate first.');
+        }
+
+        const response = await fetch(`${API_URL}/auth/me`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showResponse(data);
+        } else {
+          showResponse(data, true);
+          if (response.status === 401) {
+            localStorage.removeItem('auth_token');
+            document.getElementById('profileBtn').disabled = true;
+            document.getElementById('logoutBtn').disabled = true;
+          }
+        }
+      } catch (error) {
+        console.error('Profile error:', error);
+        showResponse({ error: error.message }, true);
+      }
+    }
+
+    // Logout
+    async function logout() {
+      try {
+        showResponse({ status: 'Logging out...' });
+
+        const token = localStorage.getItem('auth_token');
+        if (!token) {
+          throw new Error('No auth token.');
+        }
+
+        const response = await fetch(`${API_URL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/json',
+          },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          localStorage.removeItem('auth_token');
+          showResponse(data);
+
+          // Disable protected actions
+          document.getElementById('profileBtn').disabled = true;
+          document.getElementById('logoutBtn').disabled = true;
+
+          tg.showAlert('✅ Logged out successfully!');
+        } else {
+          showResponse(data, true);
+        }
+      } catch (error) {
+        console.error('Logout error:', error);
+        showResponse({ error: error.message }, true);
+      }
+    }
+
+    // Check if user is already authenticated
+    function checkAuth() {
+      const token = localStorage.getItem('auth_token');
+      if (token) {
+        document.getElementById('profileBtn').disabled = false;
+        document.getElementById('logoutBtn').disabled = false;
+        showResponse({ status: 'Already authenticated', token: token });
+      }
+    }
+
+    // Initialize
+    displayUserInfo();
+    displayDebugInfo();
+    checkAuth();
+
+    // Telegram WebApp ready
+    tg.ready();
+  </script>
 </body>
 
 </html>
