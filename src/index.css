@@ -1,1 +1,396 @@
+/* src/index.css */
+
 @import "tailwindcss";
+
+@theme {
+  /* --- ШРИФТ --- */
+  --font-family-sans: "Inter", sans-serif;
+
+  /* --- ЦВЕТОВАЯ ПАЛИТРА "ПРЕМИУМ КОСМОС" --- */
+  /* Updated color palette based on your requirements */
+  --color-background: 240 30% 8%;
+  /* Глубокий темно-фиолетовый, почти черный */
+  --color-surface: 240 25% 12%;
+  /* Чуть светлее фона, для подложек */
+  --color-card: 240 20% 16%;
+  /* Основной цвет карточек */
+  --color-elevated: 240 35% 20%;
+  /* Новый уровень для ховер-состояний */
+
+  --color-primary: 190 100% 50%;
+  /* Электрический циан — основной акцент */
+  --color-primary-glow: 190 100% 60%;
+  /* Для свечения */
+  --color-secondary: 280 100% 60%;
+  /* Яркий неон-фиолетовый — вторичный акцент */
+  --color-secondary-glow: 280 100% 70%;
+  /* Яркий неон-фиолетовый — для свечения */
+  --color-accent: 35 100% 60%;
+  /* Золотой/Оранжевый — для особых действий */
+
+  --color-success: 142 76% 55%;
+  /* Яркий зеленый для успеха */
+  --color-warning: 38 100% 55%;
+  /* Яркий оранжевый для предупреждений */
+  --color-error: 0 100% 65%;
+  /* Яркий красный для ошибок */
+
+  --color-foreground: 210 40% 98%;
+  /* Белый текст */
+  --color-muted-foreground: 220 20% 70%;
+  /* Серый текст */
+  --color-border: 220 30% 25%;
+  /* Более темные границы */
+  --color-divider: 220 30% 18%;
+  /* Разделители */
+  --color-border-glow: 0 0% 100% / 0.1;
+  /* Базовый цвет тонких границ */
+
+  /* --- СКРУГЛЕНИЯ --- */
+  --radius-sm: 0.5rem;
+  /* 8px */
+  --radius-md: 0.75rem;
+  /* 12px */
+  --radius-lg: 1rem;
+  /* 16px */
+  --radius-xl: 1.5rem;
+  /* 24px */
+  --radius-2xl: 2rem;
+  /* 32px */
+
+  /* --- ТЕНИ И СВЕЧЕНИЕ --- */
+  --shadow-primary: 0 0 20px hsl(var(--color-primary) / 0.4);
+  --shadow-secondary: 0 0 20px hsl(var(--color-secondary) / 0.4);
+  --shadow-glow: 0 0 30px hsl(var(--color-primary) / 0.3);
+  --shadow-elevated: 0 8px 32px hsl(0 0% 0% / 0.4);
+}
+
+@layer base {
+  :root {
+    --background: var(--color-background);
+    --foreground: var(--color-foreground);
+    --card: var(--color-card);
+    --surface: var(--color-surface);
+    --elevated: var(--color-elevated);
+    --primary: var(--color-primary);
+    --primary-glow: var(--color-primary-glow);
+    --primary-foreground: var(--color-foreground);
+    --secondary: var(--color-secondary);
+    --secondary-glow: var(--color-secondary-glow);
+    --secondary-foreground: var(--color-foreground);
+    --accent: var(--color-accent);
+    --accent-foreground: var(--color-foreground);
+    --success: var(--color-success);
+    --warning: var(--color-warning);
+    --error: var(--color-error);
+    --muted-foreground: var(--color-muted-foreground);
+    --border: var(--color-border);
+    --divider: var(--color-divider);
+    --border-glow: var(--color-border-glow);
+  }
+}
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: hsl(var(--color-background));
+    color: hsl(var(--color-foreground));
+    font-family: var(--font-family-sans);
+    line-height: 1.6;
+    /* Улучшенные анимированные градиенты */
+    background-image:
+      radial-gradient(circle at 15% 15%, hsl(var(--color-primary) / 0.15), transparent 35%),
+      radial-gradient(circle at 85% 85%, hsl(var(--color-secondary) / 0.15), transparent 35%),
+      radial-gradient(circle at 50% 50%, hsl(var(--color-accent) / 0.08), transparent 50%);
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  /* Стили для скроллбара в стиле темы */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: hsl(var(--color-surface));
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--color-primary) / 0.5);
+    border-radius: var(--radius-md);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--color-primary) / 0.7);
+  }
+
+  /* Улучшенный selection */
+  ::selection {
+    background-color: hsl(var(--color-primary) / 0.3);
+    color: hsl(var(--color-foreground));
+  }
+
+  /* Анимации для плавного появления */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes float {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
+  }
+
+  @keyframes pulse-glow {
+    0% {
+      box-shadow: 0 0 5px hsl(var(--color-primary) / 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px hsl(var(--color-primary) / 0.6);
+    }
+    100% {
+      box-shadow: 0 0 5px hsl(var(--color-primary) / 0.3);
+    }
+  }
+
+  @keyframes pulse-glow-primary {
+    0% {
+      box-shadow: 0 0 10px hsl(var(--primary) / 0.4);
+    }
+    50% {
+      box-shadow: 0 0 30px hsl(var(--primary) / 0.7);
+    }
+    100% {
+      box-shadow: 0 0 10px hsl(var(--primary) / 0.4);
+    }
+  }
+
+  .animate-in {
+    animation: fade-in 0.6s ease-out;
+  }
+
+  .animate-slide-in {
+    animation: slide-in 0.5s ease-out;
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  .animate-pulse-glow-primary {
+    animation: pulse-glow-primary 2s ease-in-out infinite;
+  }
+
+  /* Глобальные стили для фокус-состояний */
+  .focus-ring:focus-visible {
+    outline: 2px solid hsl(var(--color-primary));
+    outline-offset: 2px;
+    box-shadow: var(--shadow-primary);
+  }
+
+  /* Стили для стеклянного морфизма */
+  .glass {
+    background: hsl(var(--color-surface) / 0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(var(--color-border) / 0.3);
+    box-shadow: 
+      0 8px 32px 0 hsl(var(--color-background) / 0.3),
+      inset 0 1px 0 0 hsl(var(--color-foreground) / 0.05);
+  }
+
+  .glass-elevated {
+    background: hsl(var(--color-surface) / 0.95);
+    backdrop-filter: blur(30px);
+    -webkit-backdrop-filter: blur(30px);
+    border: 1px solid hsl(var(--color-border) / 0.4);
+    box-shadow: 
+      0 12px 48px 0 hsl(var(--color-background) / 0.4),
+      inset 0 1px 0 0 hsl(var(--color-foreground) / 0.1);
+  }
+
+  .glass-hover {
+    transition: all 0.3s ease;
+  }
+
+  .glass-hover:hover {
+    background: hsl(var(--color-surface) / 0.95);
+    border: 1px solid hsl(var(--color-border) / 0.5);
+    box-shadow: 
+      0 12px 40px 0 hsl(var(--color-background) / 0.4),
+      inset 0 1px 0 0 hsl(var(--color-foreground) / 0.08),
+      0 0 20px hsl(var(--color-primary) / 0.2);
+  }
+
+  /* Стили для свечения */
+  .glow-primary {
+    box-shadow: 0 0 15px hsl(var(--color-primary) / 0.3);
+  }
+
+  .glow-primary-hover {
+    transition: box-shadow 0.3s ease;
+  }
+
+  .glow-primary-hover:hover {
+    box-shadow: 0 0 25px hsl(var(--color-primary) / 0.5);
+  }
+
+  .glow-secondary {
+    box-shadow: 0 0 15px hsl(var(--color-secondary) / 0.3);
+  }
+
+  .glow-secondary-hover {
+    transition: box-shadow 0.3s ease;
+  }
+
+  .glow-secondary-hover:hover {
+    box-shadow: 0 0 25px hsl(var(--color-secondary) / 0.5);
+  }
+
+  /* Градиентные границы */
+  .border-gradient {
+    position: relative;
+    background: hsl(var(--color-surface));
+    border: none;
+  }
+
+  .border-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      45deg,
+      hsl(var(--color-primary) / 0.5),
+      hsl(var(--color-secondary) / 0.5),
+      hsl(var(--color-primary) / 0.5)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: destination-out;
+    mask-composite: exclude;
+    z-index: -1;
+  }
+
+  /* Новые утилиты для глубокого стекла */
+  .deep-glass {
+    background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.05);
+  }
+
+  .neon-shadow-primary {
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.4);
+  }
+
+  .neon-border {
+    border: 1px solid hsl(var(--primary) / 0.5);
+  }
+
+  /* Параллакс-эффекты */
+  .parallax-layer {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+
+  .parallax-element {
+    transform: translateZ(0);
+    transition: transform 0.1s ease-out;
+  }
+
+  /* Материальные эффекты */
+  .material-depth-1 {
+    box-shadow: 
+      0 1px 3px hsl(var(--color-background) / 0.4),
+      0 1px 2px hsl(var(--color-background) / 0.3);
+  }
+
+  .material-depth-2 {
+    box-shadow: 
+      0 3px 6px hsl(var(--color-background) / 0.4),
+      0 3px 6px hsl(var(--color-background) / 0.3);
+  }
+
+  .material-depth-3 {
+    box-shadow: 
+      0 10px 20px hsl(var(--color-background) / 0.4),
+      0 6px 6px hsl(var(--color-background) / 0.3);
+  }
+
+  /* Новые стили для градиентов и утилит */
+  .bg-main-gradient {
+    background: radial-gradient(circle at top left, hsl(var(--color-primary) / 0.1) 0%, transparent 30%),
+                radial-gradient(circle at bottom right, hsl(var(--color-secondary) / 0.1) 0%, transparent 30%),
+                radial-gradient(circle at center, hsl(var(--color-accent) / 0.05) 0%, transparent 40%);
+  }
+
+  /* Стили для неоновых ссылок */
+  .neon-link {
+    position: relative;
+    color: hsl(var(--color-foreground));
+    text-decoration: none;
+  }
+
+  .neon-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--secondary)));
+    transition: width 0.3s ease;
+  }
+
+  .neon-link:hover::after {
+    width: 100%;
+  }
+
+  /* Стили для активных элементов с пульсирующим свечением */
+  .pulse-glow {
+    animation: pulse-glow-primary 2s ease-in-out infinite;
+  }
+}

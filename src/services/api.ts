@@ -13,7 +13,12 @@ function getCookie(name: string): string | null {
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
   if (parts.length === 2) {
-    return parts.pop()?.split(';').shift() || null;
+    // Sanitize the cookie value to prevent XSS
+    const cookieValue = parts.pop()?.split(';').shift() || null;
+    if (cookieValue) {
+      // Basic sanitization - remove potentially dangerous characters
+      return cookieValue.replace(/[<>'"&]/g, '');
+    }
   }
   return null;
 }
@@ -36,7 +41,10 @@ api.interceptors.request.use(
     // Поэтому мы должны декодировать его перед отправкой в заголовке.
     const xsrfToken = getCookie('XSRF-TOKEN');
     if (xsrfToken) {
-      config.headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrfToken);
+      // Additional validation to ensure the token is safe
+      if (xsrfToken.length <= 1000) { // Reasonable limit for a CSRF token
+        config.headers['X-XSRF-TOKEN'] = decodeURIComponent(xsrfToken);
+      }
     }
     return config;
   },

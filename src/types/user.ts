@@ -1,15 +1,34 @@
 // src/types/user.ts
 
 /**
- * @description Описывает структуру объекта "Пользователь", как она приходит с бэкенда.
- * Этот тип будет использоваться во всем приложении (в сторе, в компонентах) для
- * обеспечения консистентности и типобезопасности.
+ * @description Описывает структуру кошелька пользователя.
+ */
+export interface Wallet {
+    id: number;
+    user_id: number;
+    balance: string; // Суммы часто приходят строками для точности
+    deposit_address: string | null;
+}
+
+/**
+ * @description Описывает структуру социального аккаунта (например, Telegram).
+ */
+export interface SocialAccount {
+    id: number;
+    user_id: number;
+    provider_name: 'telegram' | string;
+    provider_id: string;
+}
+
+/**
+ * @description Полная структура объекта "Пользователь", получаемая с эндпоинта /api/user.
  */
 export interface User {
     id: number;
-    // Судя по документации API (`/api/user`), поле называется `name`.
-    name: string;
-    email: string;
-    // В будущем сюда можно будет добавить более сложные типы,
-    // например, для `wallet` или `socialAccounts`.
+    username: string;
+    avatar: string;
+    email: string | null;
+    referral_code: string;
+    wallet: Wallet;
+    socialAccounts: SocialAccount[];
 }
