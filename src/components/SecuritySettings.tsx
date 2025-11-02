@@ -9,6 +9,7 @@ import { showSuccess, showError } from '../lib/notifications';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldIcon, LockIcon, XIcon } from './icons';
 import { TextSkeleton, InputSkeleton } from './ui';
+import { GlassCard } from './ui/GlassCard';
 
 export const SecuritySettings = () => {
     const [isPinModalOpen, setPinModalOpen] = useState(false);
@@ -30,11 +31,11 @@ export const SecuritySettings = () => {
 
     if (isLoading) {
         return (
-            <div className="space-y-4 rounded-2xl bg-surface/50 border border-border/40 p-6 glass border-gradient">
+            <GlassCard className="space-y-4">
                 <TextSkeleton className="w-1/3 h-6" />
                 <InputSkeleton />
                 <InputSkeleton />
-            </div>
+            </GlassCard>
         );
     }
 
@@ -46,17 +47,17 @@ export const SecuritySettings = () => {
                 y: -2,
                 transition: { duration: 0.2 }
             }}
-            className="rounded-2xl bg-surface/50 border border-border/40 overflow-hidden glass border-gradient material-depth-2"
+            className="rounded-2xl overflow-hidden glass material-depth-2"
         >
             {/* Заголовок секции */}
-            <div className="p-6 border-b border-border/40">
+            <div className="p-6">
                 <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
                         <ShieldIcon className="h-5 w-5 text-primary" />
                     </div>
                     <div>
-                        <h2 className="text-xl font-bold text-foreground">Настройки безопасности</h2>
-                        <p className="text-sm text-muted-foreground mt-1">
+                        <h2 className="text-xl font-bold text-white">Настройки безопасности</h2>
+                        <p className="text-sm text-gray-400 mt-1">
                             Управление защитой вашего аккаунта и средств
                         </p>
                     </div>
@@ -67,12 +68,12 @@ export const SecuritySettings = () => {
             <div className="p-6">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-card/50 border border-border/40">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-card/50">
                             <LockIcon className="h-5 w-5 text-foreground" />
                         </div>
                         <div>
-                            <p className="font-semibold text-foreground">PIN-код для вывода</p>
-                            <p className="text-sm text-muted-foreground mt-0.5">
+                            <p className="font-semibold text-white">PIN-код для вывода</p>
+                            <p className="text-sm text-gray-400 mt-0.5">
                                 {status?.has_pin
                                     ? (status.pin_enabled ? '🔒 PIN активен' : '🔓 PIN отключен')
                                     : 'PIN не установлен'
@@ -94,7 +95,7 @@ export const SecuritySettings = () => {
                             <Button
                                 variant="primary"
                                 onClick={() => setPinModalOpen(true)}
-                                className="rounded-xl font-semibold shadow-lg border-gradient"
+                                className="rounded-xl font-semibold shadow-lg"
                             >
                                 Установить PIN
                             </Button>
@@ -116,19 +117,19 @@ export const SecuritySettings = () => {
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                            className="relative w-full max-w-md rounded-2xl bg-surface border border-border/40 shadow-xl glass border-gradient"
+                            className="relative w-full max-w-md rounded-2xl bg-surface shadow-xl glass"
                         >
                             {/* Заголовок модалки */}
-                            <div className="flex items-center justify-between p-6 border-b border-border/40">
+                            <div className="flex items-center justify-between p-6">
                                 <div className="flex items-center gap-3">
                                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
                                         <LockIcon className="h-4 w-4 text-primary" />
                                     </div>
-                                    <h2 className="text-xl font-bold text-foreground">Установка PIN-кода</h2>
+                                    <h2 className="text-xl font-bold text-white">Установка PIN-кода</h2>
                                 </div>
                                 <button
                                     onClick={() => setPinModalOpen(false)}
-                                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-card/50 transition-colors"
+                                    className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 hover:text-white hover:bg-card/50 transition-colors"
                                 >
                                     <XIcon className="h-4 w-4" />
                                 </button>

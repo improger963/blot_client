@@ -39,7 +39,7 @@ export const SetPinForm = ({ onSuccess }: { onSuccess: () => void }) => {
             <div className="text-center space-y-2">
                 <div className="flex justify-center">
                     <motion.div 
-                        className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20"
+                        className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10"
                         whileHover={{ 
                             scale: 1.1,
                             rotate: [0, 5, -5, 0]
@@ -130,7 +130,7 @@ export const SetPinForm = ({ onSuccess }: { onSuccess: () => void }) => {
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Button
                     type="submit"
-                    className="w-full h-12 rounded-xl font-semibold shadow-lg border-gradient"
+                    className="w-full h-12 rounded-xl font-semibold shadow-lg"
                     isLoading={isPending}
                     disabled={!pinValue || pinValue.length !== 4}
                 >
@@ -139,7 +139,7 @@ export const SetPinForm = ({ onSuccess }: { onSuccess: () => void }) => {
             </motion.div>
 
             {/* Предупреждение о безопасности */}
-            <div className="rounded-lg bg-card/30 border border-border/40 p-3">
+            <div className="rounded-lg bg-card/30 p-3">
                 <p className="text-xs text-muted-foreground text-center">
                     ⚠️ Не сообщайте PIN-код третьим лицам. Он используется только для подтверждения вывода средств.
                 </p>

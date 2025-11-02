@@ -42,9 +42,9 @@ export const ReferralLinksCard = ({ links }: ReferralLinksCardProps) => {
         boxShadow: "0 4px 20px hsl(var(--color-background) / 0.3)"
       }}
       whileTap={{ scale: 0.98 }}
-      className="flex items-center gap-3 rounded-xl bg-surface/50 border border-border/40 p-4 group hover:bg-surface/70 transition-all duration-200 glass border-gradient material-depth-1"
+      className="flex items-center gap-3 rounded-xl bg-surface/50 p-4 group hover:bg-surface/70 transition-all duration-200 glass material-depth-1"
     >
-      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10 border border-primary/20">
+      <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-primary/10">
         <Icon className="h-5 w-5 text-primary" />
       </div>
 
@@ -63,7 +63,7 @@ export const ReferralLinksCard = ({ links }: ReferralLinksCardProps) => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={() => handleCopyLink(value)}
-        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-card border border-border/40 text-muted-foreground hover:text-foreground hover:bg-card/80 transition-colors"
+        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-card text-muted-foreground hover:text-foreground hover:bg-card/80 transition-colors"
       >
         {isCopied ? <CheckIcon className="h-3 w-3" /> : <CopyIcon className="h-3 w-3" />}
       </motion.button>
@@ -78,13 +78,13 @@ export const ReferralLinksCard = ({ links }: ReferralLinksCardProps) => {
         y: -2,
         transition: { duration: 0.2 }
       }}
-      className="rounded-2xl bg-gradient-to-br from-surface/50 to-surface/30 border border-border/40 p-6 space-y-6 glass border-gradient material-depth-2"
+      className="rounded-2xl bg-gradient-to-br from-surface/50 to-surface/30 p-6 space-y-6 glass material-depth-2"
     >
       {/* Заголовок */}
       <div className="text-center space-y-2">
         <div className="flex justify-center">
           <motion.div 
-            className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20"
+            className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10"
             whileHover={{ 
               scale: 1.1,
               rotate: [0, 5, -5, 0]
@@ -128,7 +128,7 @@ export const ReferralLinksCard = ({ links }: ReferralLinksCardProps) => {
         <Button
           onClick={handleShare}
           variant="primary"
-          className="w-full h-11 rounded-xl font-semibold shadow-lg border-gradient"
+          className="w-full h-11 rounded-xl font-semibold shadow-lg"
         >
           <ShareIcon className="h-4 w-4 mr-2" />
           Поделиться со всеми
@@ -136,7 +136,7 @@ export const ReferralLinksCard = ({ links }: ReferralLinksCardProps) => {
       </motion.div>
 
       {/* Информация о бонусах */}
-      <div className="rounded-lg bg-primary/5 border border-primary/20 p-3">
+      <div className="rounded-lg bg-primary/5 p-3">
         <p className="text-xs text-primary text-center">
           💰 Вы получаете бонусы за каждого активного приглашенного друга
         </p>

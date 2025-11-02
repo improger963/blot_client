@@ -24,5 +24,4 @@ export * from './CodeIcon';
 export * from './KeyIcon';
 export * from './PlayIcon';
 export * from './ClockIcon';
-
-
+export * from './TrophyIcon';

@@ -45,7 +45,7 @@ export const WithdrawForm = ({ onSuccess }: WithdrawFormProps) => {
             <div className="text-center space-y-2">
                 <div className="flex justify-center">
                     <motion.div 
-                        className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20"
+                        className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10"
                         whileHover={{ 
                             scale: 1.1,
                             rotate: [0, 5, -5, 0]
@@ -164,7 +164,7 @@ export const WithdrawForm = ({ onSuccess }: WithdrawFormProps) => {
             </div>
 
             {/* Информация о комиссиях */}
-            <div className="rounded-lg bg-card/30 border border-border/40 p-3 space-y-2">
+            <div className="rounded-lg bg-card/30 p-3 space-y-2">
                 <div className="flex justify-between text-xs">
                     <span className="text-muted-foreground">Минимальная сумма:</span>
                     <span className="font-semibold text-foreground">1 USD</span>
@@ -183,7 +183,7 @@ export const WithdrawForm = ({ onSuccess }: WithdrawFormProps) => {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
                 <Button
                     type="submit"
-                    className="w-full h-12 rounded-xl font-semibold shadow-lg border-gradient"
+                    className="w-full h-12 rounded-xl font-semibold shadow-lg"
                     isLoading={isPending}
                     disabled={!amountValue || !pinValue || pinValue.length !== 4}
                 >
@@ -192,7 +192,7 @@ export const WithdrawForm = ({ onSuccess }: WithdrawFormProps) => {
             </motion.div>
 
             {/* Предупреждение о безопасности */}
-            <div className="rounded-lg bg-yellow-500/10 border border-yellow-500/20 p-3">
+            <div className="rounded-lg bg-yellow-500/10 p-3">
                 <p className="text-xs text-yellow-600 text-center">
                     🔒 Проверьте адрес кошелька перед подтверждением. Транзакции необратимы.
                 </p>
@@ -203,7 +203,7 @@ export const WithdrawForm = ({ onSuccess }: WithdrawFormProps) => {
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="rounded-lg bg-red-500/10 border border-red-500/20 p-3"
+                    className="rounded-lg bg-red-500/10 p-3"
                 >
                     <p className="text-sm text-red-400 text-center">
                         ❌ {error.message}

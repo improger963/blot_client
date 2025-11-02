@@ -4,33 +4,51 @@ import { type ButtonHTMLAttributes, forwardRef } from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'success';
 type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   /**
-   * Визуальный стиль кнопки.
+   * Visual style of the button.
    * @default 'primary'
    */
   variant?: ButtonVariant;
   /**
-   * Размер кнопки.
+   * Button size.
    * @default 'md'
    */
   size?: ButtonSize;
   /**
-   * Состояние загрузки. Кнопка будет отключена, а её содержимое заменено на спиннер.
+   * Loading state. Button will be disabled and content replaced with spinner.
    * @default false
    */
   isLoading?: boolean;
+  /**
+   * Icon to the left of button text.
+   */
+  leftIcon?: React.ReactNode;
+  /**
+   * Icon to the right of button text.
+   */
+  rightIcon?: React.ReactNode;
+  /**
+   * Glow effect on hover.
+   * @default true
+   */
+  glowEffect?: boolean;
+  /**
+   * Uppercase text transformation.
+   * @default true
+   */
+  uppercase?: boolean;
 }
 
 /**
- * @description Базовый, переиспользуемый компонент кнопки с вариантами стилей и состояний.
- * Обеспечивает консистентный вид и поведение для всех интерактивных элементов.
+ * @description Base, reusable button component with style variants and states.
+ * Ensures consistent appearance and behavior for all interactive elements.
  * @example
  * <Button variant="primary" size="lg" onClick={() => {}}>
- *   Нажми меня
+ *   Click me
  * </Button>
  */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -40,43 +58,40 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       variant = 'primary',
       size = 'md',
       isLoading = false,
+      leftIcon,
+      rightIcon,
+      glowEffect = true,
+      uppercase = true,
       children,
       ...props
     },
     ref
   ) => {
-    // Базовые стили для всех кнопок
-    const baseStyles =
-      'inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 active:scale-95';
+    // Base styles for all buttons
+    const baseStyles = 'btn focus-ring disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] relative overflow-hidden';
 
-    // Стили для разных вариантов (variant)
+    // Styles for different variants - updated for premium design
     const variantStyles: Record<ButtonVariant, string> = {
-      // Основная кнопка с градиентом циан-синий
-      primary: 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg hover:from-cyan-600 hover:to-blue-700 hover:shadow-xl',
-
-      // Вторичная кнопка с фиолетово-розовым градиентом
-      secondary: 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg hover:from-purple-600 hover:to-pink-700 hover:shadow-xl',
-
-      // Outline вариант с прозрачным фоном
-      outline: 'border-2 border-primary/40 bg-transparent text-primary hover:bg-primary/10 hover:border-primary/60',
-
-      // Ghost вариант без рамки
-      ghost: 'text-foreground hover:bg-card/50 hover:shadow-sm',
-
-      // Danger вариант для деструктивных действий
-      danger: 'bg-red-500 text-white shadow-lg hover:bg-red-600 hover:shadow-xl'
+      primary: 'btn-primary',
+      secondary: 'btn-secondary',
+      ghost: 'btn-ghost',
+      danger: 'btn-danger',
+      success: 'bg-gradient-to-r from-green-500 to-emerald-600 text-white'
     };
 
-    // Стили для разных размеров (size)
+    // Styles for different sizes - responsive
     const sizeStyles: Record<ButtonSize, string> = {
-      sm: 'h-8 px-3 text-xs gap-1.5 rounded-lg',
-      md: 'h-11 px-5 text-sm gap-2 rounded-xl',
-      lg: 'h-14 px-8 text-base gap-2.5 rounded-2xl font-bold',
+      sm: 'h-8 px-3 text-[0.65rem] sm:text-xs gap-1.5 rounded-xl font-semibold',
+      md: 'h-11 px-5 text-[0.65rem] sm:text-xs gap-2 rounded-xl font-semibold',
+      lg: 'h-14 px-8 text-[0.65rem] sm:text-xs gap-2.5 rounded-2xl font-bold',
       icon: 'h-11 w-11 rounded-xl',
     };
 
+    // Glow effect class
+    const glowClass = glowEffect ? 'transition-all duration-300 hover:shadow-glow' : '';
+
     const buttonClasses = twMerge(
-      clsx(baseStyles, variantStyles[variant], sizeStyles[size], className)
+      clsx(baseStyles, variantStyles[variant], sizeStyles[size], glowClass, className)
     );
 
     return (
@@ -89,10 +104,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {isLoading ? (
           <div className="flex items-center gap-2">
             <Spinner />
-            <span>Загрузка...</span>
+            <span>Loading...</span>
           </div>
         ) : (
-          children
+          <>
+            {leftIcon && <span className="flex items-center">{leftIcon}</span>}
+            {children}
+            {rightIcon && <span className="flex items-center">{rightIcon}</span>}
+          </>
         )}
       </button>
     );
@@ -102,7 +121,7 @@ Button.displayName = 'Button';
 
 /**
  * @private
- * @description Внутренний компонент спиннера для состояния загрузки.
+ * @description Internal spinner component for loading state.
  */
 const Spinner = () => (
   <div className="flex items-center justify-center">

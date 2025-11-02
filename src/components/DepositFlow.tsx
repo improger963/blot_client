@@ -11,10 +11,11 @@ import { useCopyToClipboard } from '../hooks/useCopyToClipboard';
 import { showError, showSuccess } from '../lib/notifications';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CopyIcon, CheckIcon, ArrowLeftIcon, WalletIcon, QrCodeIcon } from './icons';
+import { GlassCard } from './ui/GlassCard';
 
 // --- Компонент Шага 1: Выбор способа оплаты ---
 const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigResponse, onSubmit: SubmitHandler<CreateDepositPayload>, isLoading: boolean }) => {
-  const { register, handleSubmit, watch, formState: { errors } } = useForm<CreateDepositPayload>({
+  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<CreateDepositPayload>({
     defaultValues: {
       amount: 100,
       payment_method: config.payment_methods?.[0]?.id || ''
@@ -38,7 +39,7 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
       <div className="text-center space-y-2">
         <div className="flex justify-center">
           <motion.div 
-            className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20"
+            className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10"
             whileHover={{ 
               scale: 1.1,
               rotate: [0, 5, -5, 0]
@@ -48,15 +49,15 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
             <WalletIcon className="h-6 w-6 text-primary" />
           </motion.div>
         </div>
-        <h3 className="text-lg font-semibold text-foreground">Пополнение баланса</h3>
-        <p className="text-sm text-muted-foreground">
+        <h3 className="text-base sm:text-lg font-semibold text-white">Пополнение баланса</h3>
+        <p className="text-xs sm:text-sm text-gray-400">
           Выберите сумму и способ оплаты
         </p>
       </div>
 
       {/* Блок выбора суммы */}
       <div className="space-y-4">
-        <h4 className="text-sm font-medium text-foreground">💰 Сумма пополнения</h4>
+        <h4 className="text-xs sm:text-sm font-medium text-white">💰 Сумма пополнения</h4>
         
         {/* Пресеты сумм */}
         <div className="grid grid-cols-5 gap-2">
@@ -65,19 +66,12 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
               key={preset}
               type="button"
               onClick={() => {
-                // This is a workaround since we can't directly set the value with react-hook-form in this context
-                const amountInput = document.getElementById('amount') as HTMLInputElement;
-                if (amountInput) {
-                  amountInput.value = preset.toString();
-                  // Trigger the input event to update react-hook-form
-                  const event = new Event('input', { bubbles: true });
-                  amountInput.dispatchEvent(event);
-                }
+                setValue('amount', preset);
               }}
-              className={`py-2 rounded-lg text-sm font-medium transition-all ${
+              className={`py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-all ${
                 amount === preset
-                  ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-lg'
-                  : 'bg-card text-foreground hover:bg-surface border border-border/40'
+                  ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
+                  : 'glass-card text-white hover:bg-white/10'
               }`}
             >
               ${preset}
@@ -91,7 +85,7 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
           type="number"
           step="0.01"
           variant="filled"
-          isError={!!errors.amount}
+          error={errors.amount?.message}
           placeholder={`От ${config.min_amount} до ${config.max_amount} USD`}
           {...register('amount', {
             required: 'Сумма обязательна',
@@ -113,22 +107,17 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
 
       {/* Выбор валюты */}
       <div className="space-y-3">
-        <h4 className="text-sm font-medium text-foreground">💱 Валюта депозита</h4>
+        <h4 className="text-xs sm:text-sm font-medium text-white">💱 Валюта депозита</h4>
         <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
-            className={`py-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+            className={`py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1 sm:gap-2 ${
               paymentMethod === 'ton'
                 ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
-                : 'bg-card text-foreground hover:bg-surface border border-border/40'
+                : 'glass-card text-white hover:bg-white/10'
             }`}
             onClick={() => {
-              const methodInput = document.getElementById('payment_method') as HTMLInputElement;
-              if (methodInput) {
-                methodInput.value = 'ton';
-                const event = new Event('change', { bubbles: true });
-                methodInput.dispatchEvent(event);
-              }
+              setValue('payment_method', 'ton');
             }}
           >
             <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs">T</div>
@@ -136,18 +125,13 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
           </button>
           <button
             type="button"
-            className={`py-3 rounded-xl text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+            className={`py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1 sm:gap-2 ${
               paymentMethod === 'usdt'
                 ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg'
-                : 'bg-card text-foreground hover:bg-surface border border-border/40'
+                : 'glass-card text-white hover:bg-white/10'
             }`}
             onClick={() => {
-              const methodInput = document.getElementById('payment_method') as HTMLInputElement;
-              if (methodInput) {
-                methodInput.value = 'usdt';
-                const event = new Event('change', { bubbles: true });
-                methodInput.dispatchEvent(event);
-              }
+              setValue('payment_method', 'usdt');
             }}
           >
             <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">U</div>
@@ -170,26 +154,26 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
       <div className="flex items-center justify-center">
         <div className="flex items-center">
           <div className="flex flex-col items-center">
-            <div className="w-3 h-3 rounded-full bg-primary"></div>
-            <span className="text-xs mt-1 text-primary font-medium">1</span>
+            <div className="w-2 sm:w-3 h-2 sm:h-3 rounded-full bg-primary"></div>
+            <span className="text-[0.65rem] sm:text-xs mt-1 text-primary font-medium">1</span>
           </div>
-          <div className="w-16 h-0.5 bg-primary"></div>
+          <div className="w-12 sm:w-16 h-0.5 bg-primary"></div>
           <div className="flex flex-col items-center">
-            <div className="w-3 h-3 rounded-full bg-border/40"></div>
-            <span className="text-xs mt-1 text-muted-foreground">2</span>
+            <div className="w-2 sm:w-3 h-2 sm:h-3 rounded-full bg-border/40"></div>
+            <span className="text-[0.65rem] sm:text-xs mt-1 text-gray-400">2</span>
           </div>
         </div>
       </div>
 
       {/* Кнопки */}
       <div className="grid grid-cols-2 gap-3">
-        <Button variant="secondary" className="h-12 rounded-xl font-semibold">
+        <Button variant="secondary" className="h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold">
           Назад
         </Button>
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Button
             onClick={handleSubmit(onSubmit)}
-            className="w-full h-12 rounded-xl font-semibold shadow-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
+            className="w-full h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold shadow-lg glass-button text-white hover:translate-y-[-2px]"
             isLoading={isLoading}
           >
             {isLoading ? 'Обработка...' : 'Продолжить'}
@@ -223,7 +207,7 @@ const Step2Instructions = ({ address, amount, onBack }: { address: string, amoun
       <div className="text-center space-y-2">
         <div className="flex justify-center">
           <motion.div 
-            className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20"
+            className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10"
             whileHover={{ 
               scale: 1.1,
               rotate: [0, 5, -5, 0]
@@ -233,8 +217,8 @@ const Step2Instructions = ({ address, amount, onBack }: { address: string, amoun
             <QrCodeIcon className="h-6 w-6 text-primary" />
           </motion.div>
         </div>
-        <h3 className="text-lg font-semibold text-foreground">Отправить</h3>
-        <p className="text-sm text-muted-foreground">
+        <h3 className="text-base sm:text-lg font-semibold text-white">Отправить</h3>
+        <p className="text-xs sm:text-sm text-gray-400">
           Отправьте точную сумму на адрес ниже
         </p>
       </div>
@@ -244,7 +228,7 @@ const Step2Instructions = ({ address, amount, onBack }: { address: string, amoun
         <div className="flex items-center">
           <div className="flex flex-col items-center">
             <div className="w-3 h-3 rounded-full bg-border/40"></div>
-            <span className="text-xs mt-1 text-muted-foreground">1</span>
+            <span className="text-xs mt-1 text-gray-400">1</span>
           </div>
           <div className="w-16 h-0.5 bg-border/40"></div>
           <div className="flex flex-col items-center">
@@ -255,47 +239,47 @@ const Step2Instructions = ({ address, amount, onBack }: { address: string, amoun
       </div>
 
       {/* Блок суммы */}
-      <div className="rounded-xl bg-card/30 border border-border/40 p-4">
+      <GlassCard className="rounded-xl p-4">
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-xs text-muted-foreground">Сумма</p>
-            <p className="text-lg font-bold text-foreground">${amount.toFixed(2)}</p>
+            <p className="text-[0.65rem] sm:text-xs text-gray-400">Сумма</p>
+            <p className="text-base sm:text-lg font-bold text-white">${amount.toFixed(2)}</p>
           </div>
           <Button 
             onClick={handleCopyAmount}
-            className="h-8 rounded-lg px-3 text-xs font-medium bg-card hover:bg-surface border border-border/40"
+            className="h-8 rounded-lg px-3 text-xs font-medium glass-card text-gray-200 hover:bg-white/10"
           >
             {isCopied && copiedText === amount.toString() ? '✓ Скопировано' : '📋 Копировать'}
           </Button>
         </div>
-        <div className="mt-3 p-3 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
-          <p className="text-xs text-yellow-500 flex items-center gap-1">
+        <div className="mt-3 p-3 rounded-lg bg-yellow-500/10">
+          <p className="text-[0.65rem] sm:text-xs text-yellow-500 flex items-center gap-1">
             ⚠️ Отправьте точную сумму, иначе транзакция не будет зачислена
           </p>
         </div>
-      </div>
+      </GlassCard>
 
       {/* Адрес и QR-код */}
       <div className="space-y-4">
         <div className="flex justify-center">
-          <div className="rounded-2xl bg-white p-4 border border-border/40 shadow-lg">
-            <QRCode value={address} size={160} />
+          <div className="rounded-2xl bg-white p-3 sm:p-4 shadow-lg">
+            <QRCode value={address} size={120} className="w-32 h-32 sm:w-40 sm:h-40" />
           </div>
         </div>
         
         <div className="space-y-3">
-          <p className="text-sm font-medium text-foreground text-center">Адрес кошелька</p>
+          <p className="text-xs sm:text-sm font-medium text-white text-center">Адрес кошелька</p>
           <div className="relative">
-            <div className="break-words rounded-xl bg-card/50 border border-border/40 p-4 font-mono text-sm text-foreground pr-12">
+            <div className="break-words rounded-lg sm:rounded-xl bg-card/50 p-3 sm:p-4 font-mono text-xs sm:text-sm text-white pr-10 sm:pr-12">
               {address}
             </div>
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleCopyAddress}
-              className="absolute right-3 top-1/2 -translate-y-1/2 flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 text-primary hover:bg-primary/20 transition-colors"
+              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
             >
-              {isCopied && copiedText === address ? <CheckIcon className="h-4 w-4" /> : <CopyIcon className="h-4 w-4" />}
+              {isCopied && copiedText === address ? <CheckIcon className="h-3 w-3 sm:h-4 sm:w-4" /> : <CopyIcon className="h-3 w-3 sm:h-4 sm:w-4" />}
             </motion.button>
           </div>
         </div>
@@ -303,20 +287,20 @@ const Step2Instructions = ({ address, amount, onBack }: { address: string, amoun
 
       {/* Кнопки */}
       <div className="grid grid-cols-2 gap-3">
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }}>
           <Button
             variant="secondary"
             onClick={onBack}
-            className="w-full h-12 rounded-xl font-semibold flex items-center justify-center"
+            className="w-full h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold flex items-center justify-center"
           >
-            <ArrowLeftIcon className="h-4 w-4 mr-2" />
+            <ArrowLeftIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
             Назад
           </Button>
         </motion.div>
-        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }}>
           <Button
             onClick={handleCopyAddress}
-            className="w-full h-12 rounded-xl font-semibold shadow-lg bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 text-white"
+            className="w-full h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold shadow-lg glass-button text-white hover:translate-y-[-2px]"
           >
             {isCopied && copiedText === address ? '✓ Скопировано' : '📋 Копировать адрес'}
           </Button>
@@ -370,8 +354,8 @@ export const DepositFlow = ({ onSuccess, config, isLoadingConfig }: { onSuccess?
         return (
             <div className="text-center space-y-4 py-8">
                 <div className="text-red-400 text-4xl">⚠️</div>
-                <h3 className="text-lg font-semibold text-foreground">Ошибка загрузки</h3>
-                <p className="text-sm text-muted-foreground">Не удалось загрузить способы оплаты</p>
+                <h3 className="text-lg font-semibold text-white">Ошибка загрузки</h3>
+                <p className="text-sm text-gray-400">Не удалось загрузить способы оплаты</p>
                 <Button onClick={() => window.location.reload()} variant="secondary">
                     Попробовать снова
                 </Button>

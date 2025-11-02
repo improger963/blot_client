@@ -16,6 +16,11 @@ export interface GameRoom {
     id: number;
     name: string;
     game_type: 'poker' | 'blot' | string;
+    /**
+     * @description Stake amount for the game room.
+     * Note: This can be a number or string depending on how the API returns it.
+     * Always use getStakeAsNumber() utility to ensure consistent handling.
+     */
     stake: number | string;
     max_players: number;
     current_players: number;

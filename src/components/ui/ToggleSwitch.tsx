@@ -15,7 +15,7 @@ export const ToggleSwitch = ({ isOn, onToggle, disabled = false }: ToggleSwitchP
             disabled={disabled}
             className={`relative inline-flex h-8 w-14 items-center rounded-2xl p-1 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background ${isOn
                     ? 'bg-gradient-to-r from-primary to-primary-glow shadow-lg shadow-primary/30'
-                    : 'bg-surface border-2 border-border/60 shadow-inner'
+                    : 'bg-surface shadow-inner'
                 } ${disabled ? 'cursor-not-allowed opacity-40 grayscale' : 'cursor-pointer'}`}
         >
             <motion.div
@@ -23,7 +23,7 @@ export const ToggleSwitch = ({ isOn, onToggle, disabled = false }: ToggleSwitchP
                 transition={{ type: "spring", stiffness: 600, damping: 30 }}
                 className={`h-6 w-6 rounded-xl shadow-lg flex items-center justify-center ${isOn
                         ? 'bg-white shadow-black/20'
-                        : 'bg-foreground/80 shadow-black/30 border border-foreground/20'
+                        : 'bg-foreground/80 shadow-black/30'
                     }`}
             >
                 {/* Иконка внутри переключателя */}

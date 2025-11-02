@@ -3,13 +3,15 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchGameRooms } from '../services/dataService';
-
 import { motion } from 'framer-motion';
-import { CardSkeleton } from '../components/ui/Skeleton';
 import { PokerTableRow } from '../components/PokerTableRow';
+import { Card, CardSkeleton } from '../components/ui';
+import { EnhancedStatsCard } from '../components/EnhancedStatsCard';
+import { getStakeAsNumber } from '../utils/game';
+import type { GameRoom } from '../types/api';
 
 export const BlotPage = () => {
-    const [activeFilter, setActiveFilter] = useState<'all' | 'low' | 'mid' | 'vip'>('all');
+    const [activeFilter, setActiveFilter] = useState<'low' | 'mid' | 'vip'>('low');
 
     const { data: gameRoomsData, isLoading } = useQuery({
         queryKey: ['gameRooms'],
@@ -23,7 +25,7 @@ export const BlotPage = () => {
     // Apply filters
     const filteredRooms = blotRooms.filter(room => {
         // Filter by stakes
-        const stake = Number(room.stake);
+        const stake = getStakeAsNumber(room.stake);
         if (activeFilter === 'low' && stake > 10) return false;
         if (activeFilter === 'mid' && (stake <= 10 || stake > 50)) return false;
         if (activeFilter === 'vip' && stake <= 50) return false;
@@ -31,88 +33,60 @@ export const BlotPage = () => {
         return true;
     });
 
+    const filterTabs = [
+        { id: 'low', label: 'Beginner', icon: 'rocket_launch' },
+        { id: 'mid', label: 'Professional', icon: 'star' },
+        { id: 'vip', label: 'VIP', icon: 'diamond' }
+    ];
+
     return (
         <div className="space-y-8 relative">
-            {/* Decorative elements */}
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none -z-10">
-                <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-primary/10 blur-3xl animate-float" />
-                <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-secondary/10 blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-            </div>
-
             {/* Page header */}
             <motion.div 
-                className="text-center space-y-2"
-                initial={{ opacity: 0, y: -20 }}
+                className="text-center space-y-4"
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-                    Блот
-                </h1>
-                <p className="text-muted-foreground max-w-2xl mx-auto">
-                    Присоединяйтесь к столам блота
+                <h1 className="display-2 text-white">Blot Rooms</h1>
+                <p className="body-1 text-lime-400/80 max-w-2xl mx-auto">
+                    Join premium blot tables with players from around the world.
+                    Real stakes, real excitement.
                 </p>
             </motion.div>
 
-            {/* Filters section */}
-            <section className="space-y-6 deep-glass rounded-2xl p-6 neon-border">
-                {/* Filters */}
-                <motion.div 
-                    className="pb-2"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                >
-                    <div className="flex flex-wrap gap-2">
-                        <button
-                            onClick={() => setActiveFilter('all')}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
-                                activeFilter === 'all'
-                                    ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
-                                    : 'bg-card text-foreground hover:bg-surface'
-                            }`}
-                        >
-                            Все
-                        </button>
-                        <button
-                            onClick={() => setActiveFilter('low')}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
-                                activeFilter === 'low'
-                                    ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg'
-                                    : 'bg-card text-foreground hover:bg-surface'
-                            }`}
-                        >
-                            Low ($10 и ниже)
-                        </button>
-                        <button
-                            onClick={() => setActiveFilter('mid')}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
-                                activeFilter === 'mid'
-                                    ? 'bg-gradient-to-r from-yellow-500 to-orange-600 text-white shadow-lg'
-                                    : 'bg-card text-foreground hover:bg-surface'
-                            }`}
-                        >
-                            Mid ($10 - $50)
-                        </button>
-                        <button
-                            onClick={() => setActiveFilter('vip')}
-                            className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-200 ${
-                                activeFilter === 'vip'
-                                    ? 'bg-gradient-to-r from-red-500 to-rose-600 text-white shadow-lg'
-                                    : 'bg-card text-foreground hover:bg-surface'
-                            }`}
-                        >
-                            VIP ($50+)
-                        </button>
-                    </div>
-                </motion.div>
+            {/* Filter Tabs */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="tab-container flex gap-1 p-1 glass-card rounded-2xl max-w-md mx-auto border border-lime-500/20"
+            >
+                {filterTabs.map(filterItem => (
+                    <button
+                        key={filterItem.id}
+                        onClick={() => setActiveFilter(filterItem.id as 'low' | 'mid' | 'vip')}
+                        className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                            activeFilter === filterItem.id
+                                ? 'tab-active text-white'
+                                : 'tab-button text-gray-400'
+                        }`}
+                    >
+                        <span className="material-icons-round text-lg">
+                            {filterItem.icon}
+                        </span>
+                        <span className="caption hidden sm:block">{filterItem.label}</span>
+                    </button>
+                ))}
+            </motion.div>
 
-                {/* Game rooms table */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
-                >
+            {/* Game rooms table */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+            >
+                <Card className="p-6">
                     {isLoading ? (
                         <div className="space-y-3">
                             {Array.from({ length: 5 }).map((_, i) => (
@@ -126,18 +100,51 @@ export const BlotPage = () => {
                             ))}
                         </div>
                     ) : (
-                        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border/40 bg-surface/50 py-16 text-center">
-                            <div className="rounded-full bg-card p-4 mb-4">
-                                <div className="h-8 w-8 rounded-full bg-muted-foreground/20" />
+                        <div className="flex flex-col items-center justify-center rounded-2xl py-12 text-center">
+                            <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-lime-500 to-lime-600 flex items-center justify-center text-white text-2xl mb-4">
+                                <span className="material-icons-round">sports_esports</span>
                             </div>
-                            <h3 className="text-lg font-semibold text-foreground mb-2">Столов не найдено</h3>
-                            <p className="text-sm text-muted-foreground max-w-sm">
-                                В этой категории пока нет доступных столов. Попробуйте выбрать другую категорию или проверьте позже.
+                            <h3 className="headline text-white mb-2">No Rooms Available</h3>
+                            <p className="body-2 text-lime-400/80">
+                                No blot rooms match your current filter. Try selecting a different category.
                             </p>
                         </div>
                     )}
-                </motion.div>
-            </section>
+                </Card>
+            </motion.div>
+
+            {/* Quick Stats */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
+                <EnhancedStatsCard
+                    icon="groups"
+                    label="Active Players"
+                    value="1.8K"
+                    trend={{ value: 8, period: '24h' }}
+                />
+                <EnhancedStatsCard
+                    icon="payments"
+                    label="Total Prize"
+                    value="32.5K TON"
+                    trend={{ value: 12, period: '24h' }}
+                />
+                <EnhancedStatsCard
+                    icon="schedule"
+                    label="Avg. Wait Time"
+                    value="32s"
+                    trend={{ value: -10, period: '24h' }}
+                />
+                <EnhancedStatsCard
+                    icon="casino"
+                    label="Active Tables"
+                    value="89"
+                    trend={{ value: 3, period: '24h' }}
+                />
+            </motion.div>
         </div>
     );
 };

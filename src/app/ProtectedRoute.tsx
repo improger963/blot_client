@@ -2,6 +2,7 @@
 
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
+import { Preloader } from '../components/ui/Preloader';
 
 /**
  * @description Компонент-обертка для защиты маршрутов.
@@ -17,12 +18,7 @@ export const ProtectedRoute = () => {
     // Это критически важно для хорошего UX, чтобы авторизованный пользователь
     // при перезагрузке страницы не увидел на мгновение страницу логина.
     if (status === 'loading' || status === 'idle') {
-        // В реальном приложении здесь был бы красивый полноэкранный прелоадер (спиннер).
-        return (
-            <div className="flex h-screen items-center justify-center">
-                <p>Проверка сессии...</p>
-            </div>
-        );
+        return <Preloader />;
     }
 
     // Если проверка завершена и пользователь НЕ аутентифицирован,

@@ -19,7 +19,7 @@ interface SkeletonProps extends Omit<HTMLMotionProps<"div">, "children" | "onDra
  * Использует анимацию пульсации для создания эффекта "живого" интерфейса.
  */
 function Skeleton({ className, variant = 'rounded', lines = 1, ...props }: SkeletonProps) {
-    const baseClasses = 'animate-pulse bg-card/60 border border-border/40';
+    const baseClasses = 'animate-pulse bg-card/60';
 
     const variantClasses = {
         text: 'rounded-lg',

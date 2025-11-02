@@ -1,39 +1,78 @@
 import { forwardRef } from 'react';
+import type { InputHTMLAttributes } from 'react';
+import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import clsx from 'clsx';
 
-export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-    isError?: boolean;
-    variant?: 'default' | 'filled';
+export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string;
+  error?: string;
+  leftIcon?: React.ReactNode;
+  rightIcon?: React.ReactNode;
+  fullWidth?: boolean;
+  glowEffect?: boolean;
+  variant?: 'default' | 'filled' | 'outlined';
 }
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-    ({ className, type, isError = false, variant = 'default', ...props }, ref) => {
-        const inputClasses = twMerge(
-            clsx(
-                // Базовые стили
-                'flex h-12 w-full rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200',
-                'placeholder:text-muted-foreground/60 disabled:cursor-not-allowed disabled:opacity-50',
-                'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+  ({ 
+    className, 
+    label, 
+    error, 
+    leftIcon, 
+    rightIcon, 
+    fullWidth = true, 
+    glowEffect = true,
+    variant = 'default',
+    ...props 
+  }, ref) => {
+    // Base input classes
+    const baseClasses = 'input-field transition-all duration-200 backdrop-blur-sm';
+    
+    // Variant classes
+    const variantClasses = {
+      default: '',
+      filled: 'bg-[hsl(var(--color-surface)/0.8)]',
+      outlined: 'bg-transparent border-2'
+    }[variant];
+    
+    const errorClasses = error ? 'border-red-500 focus:ring-red-500' : '';
+    const widthClasses = fullWidth ? 'w-full' : '';
+    const glowClasses = glowEffect ? 'focus:shadow-glow' : '';
 
-                // Варианты стилей
-                {
-                    // Стандартный вариант с границей
-                    'default': 'border-2 border-border/60 bg-surface text-foreground focus-visible:border-primary/40',
-                    // Заполненный вариант без видимой границы
-                    'filled': 'border-2 border-transparent bg-card/50 text-foreground focus-visible:bg-card focus-visible:border-primary/40',
-                }[variant],
+    const inputClasses = twMerge(
+      clsx(baseClasses, variantClasses, errorClasses, widthClasses, glowClasses, className)
+    );
 
-                // Состояние ошибки
-                {
-                    'border-red-500/60 focus-visible:border-red-500/60 focus-visible:ring-red-500/40': isError,
-                },
-
-                className
-            )
-        );
-
-        return <input type={type} className={inputClasses} ref={ref} {...props} />;
-    }
+    return (
+      <div className={`flex flex-col gap-2 ${fullWidth ? 'w-full' : ''}`}>
+        {label && (
+          <label className="text-sm font-semibold text-foreground uppercase tracking-wider">
+            {label}
+          </label>
+        )}
+        <div className="relative">
+          {leftIcon && (
+            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted">
+              {leftIcon}
+            </div>
+          )}
+          <input
+            ref={ref}
+            className={`${inputClasses} ${leftIcon ? 'pl-10' : ''} ${rightIcon ? 'pr-10' : ''}`}
+            {...props}
+          />
+          {rightIcon && (
+            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted">
+              {rightIcon}
+            </div>
+          )}
+        </div>
+        {error && (
+          <p className="text-xs text-error mt-1 font-medium">{error}</p>
+        )}
+      </div>
+    );
+  }
 );
+
 Input.displayName = 'Input';

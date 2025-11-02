@@ -11,11 +11,11 @@ export const ActivityRow = ({ activity }: { activity: ReferralActivityItem }) =>
             transition: { duration: 0.2 },
             boxShadow: "0 4px 20px hsl(var(--color-background) / 0.3)"
         }}
-        className="flex items-center gap-4 rounded-xl bg-surface/30 p-4 border border-border/20 hover:border-border/40 hover:bg-surface/50 transition-all duration-200 group material-depth-1"
+        className="flex items-center gap-4 rounded-xl bg-surface/30 p-4 hover:bg-surface/50 transition-all duration-200 group material-depth-1"
     >
         {/* Аватар пользователя - "чип" с градиентной иконкой */}
         <motion.div 
-            className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 border border-primary/20 group-hover:scale-110 transition-transform duration-200 border-gradient"
+            className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/10 to-secondary/10 group-hover:scale-110 transition-transform duration-200"
             whileHover={{ 
                 rotate: [0, 5, -5, 0],
                 scale: 1.1
@@ -35,7 +35,7 @@ export const ActivityRow = ({ activity }: { activity: ReferralActivityItem }) =>
                     {activity.username}
                 </motion.p>
                 <motion.span 
-                    className="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-400 border border-green-500/20 border-gradient"
+                    className="inline-flex items-center rounded-full bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-400"
                     whileHover={{ scale: 1.1 }}
                 >
                     Активен

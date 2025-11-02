@@ -1,11 +1,10 @@
 import { Outlet, useLocation } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Header } from './Header';
-import { SubNav } from './SubNav';
-import { BottomNav } from './BottomNav';
+import { Header, BottomNav, DesktopMenu, ResponsiveContainer } from './';
+import { useIsMobile } from '../../hooks/useDeviceDetection';
 
 export const MainLayout = () => {
   const location = useLocation();
+  const isMobile = useIsMobile();
   
   // Determine if we're on a game page
   const isGamePage = location.pathname === '/poker' || 
@@ -14,46 +13,29 @@ export const MainLayout = () => {
                      location.pathname.startsWith('/game-rooms');
 
   return (
-    <div className="min-h-screen bg-background font-sans text-foreground relative overflow-hidden">
-      {/* Анимированный градиентный фон */}
-      <div className="absolute inset-0 z-0 bg-main-gradient"></div>
-      <motion.div 
-        className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/20 blur-3xl"
-        animate={{
-          x: [0, 100, 0],
-          y: [0, -100, 0],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
-      />
-      <motion.div 
-        className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-secondary/20 blur-3xl"
-        animate={{
-          x: [0, -100, 0],
-          y: [0, 100, 0],
-        }}
-        transition={{
-          duration: 25,
-          repeat: Infinity,
-          repeatType: "reverse",
-        }}
-      />
+    <div className="min-h-screen bg-grid font-sans text-foreground relative">
+      <div className="flex flex-col items-center w-full">
+        {/* Header */}
+        <div className="w-full max-w-6xl px-4 z-20 relative">
+          <Header />
+        </div>
 
-      {/* Верхняя шапка */}
-      <Header />
+        {/* Desktop menu (only shown on desktop) */}
+        {!isMobile && (
+          <div className="w-full max-w-6xl px-4 z-20 relative">
+            <DesktopMenu />
+          </div>
+        )}
+      </div>
 
-      {/* Поднавигация (только на десктопе и только на игровых страницах) */}
-      {isGamePage && <SubNav />}
-
-      {/* Основной контент */}
-      <main className="container mx-auto p-4 relative z-10 pb-24 lg:pb-8">
-        <Outlet />
+      {/* Main content */}
+      <main className="relative z-10 pb-24 lg:pb-8 w-full">
+        <ResponsiveContainer padding="sm" className="w-full max-w-6xl mx-auto">
+          <Outlet />
+        </ResponsiveContainer>
       </main>
 
-      {/* Нижняя навигация (только на мобильных) */}
+      {/* Bottom navigation (only on mobile) */}
       <BottomNav />
     </div>
   );

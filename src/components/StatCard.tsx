@@ -37,7 +37,7 @@ export const StatCard = ({ label, value, icon, trend, trendValue, className = ''
                 transition: { duration: 0.2 },
                 boxShadow: "0 10px 30px hsl(var(--color-background) / 0.4)"
             }}
-            className={`rounded-2xl bg-surface/50 border border-border/40 p-6 group hover:bg-surface/70 transition-all duration-200 glass border-gradient material-depth-2 ${className}`}
+            className={`rounded-2xl bg-surface/50 p-6 group hover:bg-surface/70 transition-all duration-200 glass material-depth-2 ${className}`}
         >
             {/* Верхняя часть - лейбл и иконка */}
             <div className="flex items-center justify-between mb-3">
@@ -50,7 +50,7 @@ export const StatCard = ({ label, value, icon, trend, trendValue, className = ''
                             scale: 1.1, 
                             rotate: [0, 5, -5, 0] 
                         }}
-                        className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 border border-primary/20 text-primary"
+                        className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary"
                     >
                         {icon}
                     </motion.div>
@@ -64,7 +64,7 @@ export const StatCard = ({ label, value, icon, trend, trendValue, className = ''
                     initial={{ scale: 0.9 }}
                     animate={{ scale: 1 }}
                     whileHover={{ scale: 1.05 }}
-                    className="text-3xl font-bold text-foreground"
+                    className="text-2xl sm:text-3xl font-bold text-foreground"
                 >
                     {value}
                 </motion.p>

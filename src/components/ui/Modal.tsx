@@ -85,16 +85,16 @@ export const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalPr
               duration: 0.4
             }}
             onClick={(e) => e.stopPropagation()}
-            className={`relative w-full ${sizeClasses[size]} rounded-2xl glass border-gradient`}
+            className={`relative w-full ${sizeClasses[size]} rounded-2xl glass-card`}
           >
             {/* Заголовок модалки */}
-            <div className="flex items-center justify-between border-b border-border/40 p-6">
-              <h2 className="text-xl font-bold text-foreground">{title}</h2>
+            <div className="flex items-center justify-between p-6">
+              <h2 className="text-xl font-bold text-white">{title}</h2>
               <motion.button
                 whileHover={{ scale: 1.1, rotate: 90 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={onClose}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-all duration-200 hover:bg-card/50 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-all duration-200 hover:bg-card/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
                 <XIcon className="h-4 w-4" />
               </motion.button>
@@ -108,7 +108,7 @@ export const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalPr
             </div>
 
             {/* Декоративный акцент */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary to-secondary rounded-t-2xl" />
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-600 rounded-t-2xl" />
           </motion.div>
         </motion.div>
       )}

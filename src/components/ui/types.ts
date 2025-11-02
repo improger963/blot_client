@@ -101,7 +101,6 @@ export interface ThemeColors {
     card: string;
     foreground: string;
     mutedForeground: string;
-    border: string;
 }
 
 // Utility types

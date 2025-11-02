@@ -3,14 +3,16 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchTournaments } from '../services/dataService';
-
 import { motion } from 'framer-motion';
-import { CardSkeleton } from '../components/ui/Skeleton';
-import { TournamentCard } from '../components/TournamentCard';
-import { GameTabs } from '../components/ui';
+import { EnhancedTournamentCard } from '../components/EnhancedTournamentCard';
+import { Card } from '../components/ui';
+import { LoadingSkeleton } from '../components/LoadingSkeleton';
+import { EnhancedStatsCard } from '../components/EnhancedStatsCard';
+import type { Tournament } from '../types/api';
 
 export const TournamentsPage = () => {
-    const [activeFilter, setActiveFilter] = useState<'all' | 'poker' | 'blot'>('all');
+    const [activeFilter, setActiveFilter] = useState<'poker' | 'blot'>('poker');
+    const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
 
     const { data: tournamentsData, isLoading } = useQuery({
         queryKey: ['tournaments'],
@@ -20,86 +22,194 @@ export const TournamentsPage = () => {
 
     // Apply filters
     const filteredTournaments = tournamentsData?.filter(tournament => {
-        if (activeFilter === 'all') return true;
         return tournament.game_type === activeFilter;
     }) || [];
 
     const filterTabs = [
-        { id: 'all', label: 'Все' },
-        { id: 'poker', label: 'Покер' },
-        { id: 'blot', label: 'Блот' }
+        { id: 'poker', label: 'Poker', icon: 'sports_esports' },
+        { id: 'blot', label: 'Blot', icon: 'cards' }
     ];
+
+    const handleRegisterTournament = (tournament: Tournament) => {
+        setSelectedTournament(tournament);
+    };
+
+    const handleConfirmRegistration = () => {
+        if (selectedTournament) {
+            // Handle tournament registration logic
+            console.log('Register for tournament', selectedTournament.id);
+            setSelectedTournament(null);
+        }
+    };
 
     return (
         <div className="space-y-8 relative">
-            {/* Decorative elements */}
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none -z-10">
-                <div className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-primary/10 blur-3xl animate-float" />
-                <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-secondary/10 blur-3xl animate-float" style={{ animationDelay: '1s' }} />
-            </div>
-
             {/* Page header */}
             <motion.div 
-                className="text-center space-y-2"
-                initial={{ opacity: 0, y: -20 }}
+                className="text-center space-y-4"
+                initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
-                    Турниры
-                </h1>
-                <p className="text-muted-foreground max-w-2xl mx-auto">
-                    Присоединяйтесь к турнирам с крупными призами
+                <h1 className="display-2 text-white">Tournaments</h1>
+                <p className="body-1 text-lime-400/80 max-w-2xl mx-auto">
+                    Compete in exciting poker tournaments with massive prize pools.
+                    Prove your skills and climb the leaderboards.
                 </p>
             </motion.div>
 
-            {/* Filters section */}
-            <section className="space-y-6 deep-glass rounded-2xl p-6 neon-border">
-                {/* Filters */}
-                <motion.div 
-                    className="pb-2"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: 0.1 }}
-                >
-                    <GameTabs 
-                        tabs={filterTabs} 
-                        activeTab={activeFilter} 
-                        onTabChange={(tabId) => setActiveFilter(tabId as 'all' | 'poker' | 'blot')} 
-                    />
-                </motion.div>
+            {/* Filter Tabs */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.1 }}
+                className="tab-container flex gap-1 p-1 glass-card rounded-2xl max-w-md mx-auto border border-lime-500/20"
+            >
+                {filterTabs.map(filterItem => (
+                    <button
+                        key={filterItem.id}
+                        onClick={() => setActiveFilter(filterItem.id as 'poker' | 'blot')}
+                        className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                            activeFilter === filterItem.id
+                                ? 'tab-active text-white'
+                                : 'tab-button text-gray-400'
+                        }`}
+                    >
+                        <span className="material-icons-round text-lg">
+                            {filterItem.icon}
+                        </span>
+                        <span className="caption hidden sm:block">{filterItem.label}</span>
+                    </button>
+                ))}
+            </motion.div>
 
-                {/* Tournaments grid */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.2 }}
+            {/* Tournaments list */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="space-y-4"
+            >
+                {isLoading ? (
+                    <LoadingSkeleton type="card" count={3} />
+                ) : filteredTournaments.length > 0 ? (
+                    filteredTournaments.map((tournament, index) => (
+                        <motion.div
+                            key={tournament.id}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                        >
+                            <EnhancedTournamentCard 
+                                tournament={tournament} 
+                                onRegister={handleRegisterTournament} 
+                            />
+                        </motion.div>
+                    ))
+                ) : (
+                    <Card className="text-center p-6" padding="lg" hoverEffect={true}>
+                        <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-lime-500 to-lime-600 flex items-center justify-center text-white text-2xl mb-4">
+                            <span className="material-icons-round">emoji_events</span>
+                        </div>
+                        <h3 className="headline text-white mb-2">No Tournaments Available</h3>
+                        <p className="body-2 text-lime-400/80">
+                            No tournaments match your current filter. Try selecting a different category.
+                        </p>
+                    </Card>
+                )}
+            </motion.div>
+
+            {/* Quick Stats */}
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
+                <EnhancedStatsCard
+                    icon="emoji_events"
+                    label="Active Tournaments"
+                    value="24"
+                    trend={{ value: 5, period: '24h' }}
+                />
+                <EnhancedStatsCard
+                    icon="payments"
+                    label="Total Prizes"
+                    value="125.6K TON"
+                    trend={{ value: 12, period: '24h' }}
+                />
+                <EnhancedStatsCard
+                    icon="groups"
+                    label="Registered Players"
+                    value="8.2K"
+                    trend={{ value: 8, period: '24h' }}
+                />
+                <EnhancedStatsCard
+                    icon="leaderboard"
+                    label="Top Prize"
+                    value="25K TON"
+                    trend={{ value: 0, period: '24h' }}
+                />
+            </motion.div>
+
+            {/* Registration Modal */}
+            {selectedTournament && (
+                <div 
+                    className="fixed inset-0 bg-black/60 backdrop-blur-lg flex items-center justify-center p-4 z-50"
+                    onClick={() => setSelectedTournament(null)}
                 >
-                    {isLoading ? (
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            {Array.from({ length: 3 }).map((_, i) => (
-                                <CardSkeleton key={i} className="h-[200px]" />
-                            ))}
-                        </div>
-                    ) : filteredTournaments.length > 0 ? (
-                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                            {filteredTournaments.map((tournament) => (
-                                <TournamentCard key={tournament.id} tournament={tournament} />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-border/40 bg-surface/50 py-16 text-center">
-                            <div className="rounded-full bg-card p-4 mb-4">
-                                <div className="h-8 w-8 rounded-full bg-muted-foreground/20" />
+                    <div 
+                        className="glass-panel max-w-md w-full p-6 rounded-2xl"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div className="text-center space-y-6">
+                            <div className="w-16 h-16 mx-auto rounded-2xl bg-gradient-to-br from-lime-500 to-lime-600 flex items-center justify-center text-white text-2xl">
+                                <span className="material-icons-round">emoji_events</span>
                             </div>
-                            <h3 className="text-lg font-semibold text-foreground mb-2">Турниров не найдено</h3>
-                            <p className="text-sm text-muted-foreground max-w-sm">
-                                В этой категории пока нет доступных турниров. Попробуйте выбрать другую категорию или проверьте позже.
-                            </p>
+
+                            <div>
+                                <h3 className="headline text-white mb-2">Register for {selectedTournament.name}</h3>
+                                <p className="body-2 text-lime-400/80">
+                                    Confirm your registration for this tournament
+                                </p>
+                            </div>
+
+                            <div className="space-y-3 glass-card p-4 rounded-2xl">
+                                <div className="flex justify-between">
+                                    <span className="body-2 text-gray-400">Buy-in</span>
+                                    <span className="body-1 text-lime-400">{selectedTournament.buy_in} TON</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="body-2 text-gray-400">Prize Pool</span>
+                                    <span className="body-1 text-white">{selectedTournament.prize_pool.toLocaleString()} TON</span>
+                                </div>
+                                <div className="flex justify-between">
+                                    <span className="body-2 text-gray-400">Current Players</span>
+                                    <span className="body-1 text-white">{selectedTournament.current_players}/{selectedTournament.max_players}</span>
+                                </div>
+                            </div>
+
+                            <div className="flex gap-3">
+                                <button
+                                    className="btn-secondary flex-1 py-3 rounded-xl"
+                                    onClick={() => setSelectedTournament(null)}
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    className="btn-primary flex-1 py-3 rounded-xl"
+                                    onClick={handleConfirmRegistration}
+                                >
+                                    <span className="flex items-center justify-center gap-2">
+                                        <span className="material-icons-round text-lg">check</span>
+                                        Confirm Registration
+                                    </span>
+                                </button>
+                            </div>
                         </div>
-                    )}
-                </motion.div>
-            </section>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
