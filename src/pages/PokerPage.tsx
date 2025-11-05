@@ -1,8 +1,8 @@
 // src/pages/PokerPage.tsx
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { fetchGameRooms } from '../services/dataService';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { fetchGameRooms, joinGameRoom } from '../services/dataService';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { EnhancedPokerRoomCard } from '../components/EnhancedPokerRoomCard';
@@ -10,6 +10,7 @@ import { Card, StatCard } from '../components/ui';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { ResponsiveGrid } from '../components/layout';
 import { getStakeAsNumber } from '../utils/game';
+import { showError, showSuccess } from '../lib/notifications';
 import type { GameRoom } from '../types/api';
 
 export const PokerPage = () => {
@@ -21,6 +22,27 @@ export const PokerPage = () => {
         queryKey: ['gameRooms'],
         queryFn: fetchGameRooms,
         refetchInterval: 30000, // 30 seconds
+    });
+
+    // Mutation for joining a game room
+    const { mutate: joinRoom, isPending: isJoining } = useMutation({
+        mutationFn: (roomId: number) => joinGameRoom(roomId),
+        onSuccess: (data) => {
+            showSuccess('Successfully joined the room!');
+            // Navigate to game room
+            navigate(`/game-rooms/${data.room.id}`);
+        },
+        onError: (error: any) => {
+            // Handle specific error cases
+            if (error?.response?.status === 400) {
+                showError(error?.response?.data?.error || 'Failed to join room');
+            } else if (error?.response?.status === 401) {
+                showError('You must be logged in to join a room');
+                navigate('/login');
+            } else {
+                showError('Failed to join room. Please try again.');
+            }
+        },
     });
 
     // Filter rooms for poker game type
@@ -49,8 +71,8 @@ export const PokerPage = () => {
 
     const handleConfirmJoin = () => {
         if (selectedRoom) {
-            // Navigate to game room or handle join logic
-            navigate(`/game-rooms/${selectedRoom.id}`);
+            // Join the room using mutation
+            joinRoom(selectedRoom.id);
         }
     };
 
@@ -219,11 +241,19 @@ export const PokerPage = () => {
                                 <button
                                     className="btn-primary flex-1 py-3 rounded-xl"
                                     onClick={handleConfirmJoin}
+                                    disabled={isJoining}
                                 >
-                                    <span className="flex items-center justify-center gap-2">
-                                        <span className="material-icons-round text-lg">login</span>
-                                        Join Game
-                                    </span>
+                                    {isJoining ? (
+                                        <span className="flex items-center justify-center gap-2">
+                                            <span className="material-icons-round text-lg animate-spin">autorenew</span>
+                                            Joining...
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center justify-center gap-2">
+                                            <span className="material-icons-round text-lg">login</span>
+                                            Join Game
+                                        </span>
+                                    )}
                                 </button>
                             </div>
                         </div>

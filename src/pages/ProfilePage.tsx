@@ -1,17 +1,20 @@
 // src/pages/ProfilePage.tsx
+import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchSecurityStatus } from '../services/dataService';
 import { useAuthStore } from '../store/authStore';
 import { SecuritySettings } from '../components/SecuritySettings';
+import { ChangePasswordForm } from '../components/ChangePasswordForm';
 import { EnhancedProfileHeader } from '../components/EnhancedProfileHeader';
 import { Button } from '../components/ui';
 import { motion } from 'framer-motion';
-import { ShieldIcon, LogOutIcon } from '../components/icons';
+import { ShieldIcon, LogOutIcon, KeyIcon } from '../components/icons';
 import { Card } from '../components/ui';
 import { EnhancedStatsCard } from '../components/EnhancedStatsCard';
 
 export const ProfilePage = () => {
     const { user, logout } = useAuthStore();
+    const [activeTab, setActiveTab] = useState<'security' | 'password'>('security');
     const { data: securityStatus, isLoading: isSecurityLoading } = useQuery({
         queryKey: ['securityStatus'],
         queryFn: fetchSecurityStatus,
@@ -70,14 +73,48 @@ export const ProfilePage = () => {
                 />
             </motion.div>
 
-            {/* Security Settings */}
-            <motion.section
+            {/* Profile Tabs */}
+            <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
             >
-                <SecuritySettings />
-            </motion.section>
+                <div className="tab-container flex gap-1 p-1 glass-card rounded-2xl max-w-md mx-auto border border-lime-500/20">
+                    <button
+                        onClick={() => setActiveTab('security')}
+                        className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                            activeTab === 'security'
+                                ? 'tab-active text-white'
+                                : 'tab-button text-gray-400'
+                        }`}
+                    >
+                        <span className="material-icons-round text-lg">security</span>
+                        <span className="caption hidden sm:block">Security</span>
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('password')}
+                        className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                            activeTab === 'password'
+                                ? 'tab-active text-white'
+                                : 'tab-button text-gray-400'
+                        }`}
+                    >
+                        <KeyIcon className="h-4 w-4" />
+                        <span className="caption hidden sm:block">Password</span>
+                    </button>
+                </div>
+
+                {/* Tab Content */}
+                <div className="mt-6">
+                    {activeTab === 'security' ? (
+                        <SecuritySettings />
+                    ) : (
+                        <Card className="p-6">
+                            <ChangePasswordForm />
+                        </Card>
+                    )}
+                </div>
+            </motion.div>
 
             {/* Account Status */}
             <Card className="space-y-4 p-6">
@@ -160,6 +197,7 @@ export const ProfilePage = () => {
                             leftIcon={<span className="material-icons-round">groups</span>}
                             className="w-full"
                             variant="secondary"
+                            onClick={() => window.location.hash = '/referral'}
                         >
                             Invite Friends
                         </Button>

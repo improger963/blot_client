@@ -5,6 +5,8 @@ import type {
   WalletBalanceResponse,
   WalletHistoryResponse,
   ReferralStatsResponse,
+  ReferralActivityResponse,
+  ReferralLinksResponse,
   CreateWithdrawalPayload,
   CreateWithdrawalResponse,
   SecurityStatusResponse,
@@ -45,6 +47,16 @@ export const joinGameRoom = async (roomId: number | string): Promise<any> => {
   return data;
 };
 
+/**
+ * @description Отправляет запрос на регистрацию в турнире.
+ * @param tournamentId - ID турнира, в котором нужно зарегистрироваться.
+ */
+export const registerForTournament = async (tournamentId: number | string): Promise<any> => {
+  // API ожидает POST /api/tournaments/{tournament}/register
+  const { data } = await api.post(`/tournaments/${tournamentId}/register`);
+  return data;
+};
+
 
 /**
 @description Запрашивает с сервера баланс кошелька пользователя.
@@ -68,6 +80,22 @@ export const fetchWalletHistory = async (): Promise<WalletHistoryResponse> => {
  */
 export const fetchReferralStats = async (): Promise<ReferralStatsResponse> => {
   const { data } = await api.get('/referral');
+  return data;
+};
+
+/**
+ * @description Запрашивает с сервера активность рефералов.
+ */
+export const fetchReferralActivity = async (): Promise<ReferralActivityResponse> => {
+  const { data } = await api.get('/referral/activity');
+  return data;
+};
+
+/**
+ * @description Запрашивает с сервера реферальные ссылки.
+ */
+export const fetchReferralLinks = async (): Promise<ReferralLinksResponse> => {
+  const { data } = await api.get('/referral/links');
   return data;
 };
 

@@ -61,6 +61,10 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       useAuthStore.getState().setUnauthenticated();
       console.error("401 Unauthorized! Сессия завершена.");
+      // Redirect to login page
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     // Добавим обработку 419 ошибки для более ясного логгирования
     if (error.response?.status === 419) {

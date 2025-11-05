@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store/authStore';
-import { loginWithTelegram, getCsrfCookie } from '../services/authService';
+import { loginWithTelegram } from '../services/authService';
 import { useTelegram } from '../hooks/useTelegram';
 import { DevLoginForm } from '../components/DevLoginForm';
 import { motion } from 'framer-motion';
@@ -21,29 +21,34 @@ import { Preloader } from '../components/ui/Preloader';
 export const LoginPageNew = () => {
   const { isAuthenticated } = useAuthStore();
   const { isReady, isTelegramEnv, initData, user: telegramUser } = useTelegram();
+  const navigate = useNavigate();
 
-  const { mutate, isPending, error } = useMutation({
+  const { mutate: telegramLogin, isPending: isTelegramPending, error: telegramError } = useMutation({
     mutationFn: async (dataToLogin: string) => {
-      await getCsrfCookie();
       return loginWithTelegram(dataToLogin);
     },
     onSuccess: (data) => {
-      // Set user in auth store instead of full page reload
+      // Set user in auth store
       useAuthStore.getState().setUser(data.user);
+      // Navigate to home
+      navigate('/');
     },
+    onError: (error) => {
+      console.error("Telegram login error:", error);
+    }
   });
 
   // Handle dev login
   const handleDevLogin = (initData: string) => {
-    mutate(initData);
+    telegramLogin(initData);
   };
 
   // Автоматически инициируем вход через Telegram, если мы в Telegram окружении
   useEffect(() => {
     if (isTelegramEnv && initData && !isAuthenticated) {
-      mutate(initData);
+      telegramLogin(initData);
     }
-  }, [isTelegramEnv, initData, isAuthenticated, mutate]);
+  }, [isTelegramEnv, initData, isAuthenticated, telegramLogin]);
 
   // Если пользователь уже аутентифицирован, перенаправляем на главную.
   if (isAuthenticated) {
@@ -56,6 +61,7 @@ export const LoginPageNew = () => {
   }
 
   // Show loading state during authentication
+  const isPending = isTelegramPending;
   if (isPending) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden grid-bg noise-bg">
@@ -143,18 +149,21 @@ export const LoginPageNew = () => {
 
         {/* Сценарий №2: Мы в обычном браузере (РАЗРАБОТКА) */}
         {!isTelegramEnv && (
-          <DevLoginForm onLogin={handleDevLogin} isPending={isPending} />
+          <DevLoginForm 
+            onLogin={handleDevLogin} 
+            isPending={isPending} 
+          />
         )}
 
         {/* Отображение ошибки входа */}
-        {error && (
+        {telegramError && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             className="mt-4 rounded-xl bg-red-500/10 p-4"
           >
             <p className="body-2 text-red-400 text-center">
-              ❌ Ошибка входа: {error.message}
+              ❌ Ошибка входа: {telegramError?.message || 'Authentication failed'}
             </p>
           </motion.div>
         )}

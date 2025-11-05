@@ -1,23 +1,47 @@
 // src/pages/TournamentsPage.tsx
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { fetchTournaments } from '../services/dataService';
+import { useQuery, useMutation } from '@tanstack/react-query';
+import { fetchTournaments, registerForTournament } from '../services/dataService';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { EnhancedTournamentCard } from '../components/EnhancedTournamentCard';
 import { Card } from '../components/ui';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { EnhancedStatsCard } from '../components/EnhancedStatsCard';
+import { showError, showSuccess } from '../lib/notifications';
 import type { Tournament } from '../types/api';
 
 export const TournamentsPage = () => {
     const [activeFilter, setActiveFilter] = useState<'poker' | 'blot'>('poker');
     const [selectedTournament, setSelectedTournament] = useState<Tournament | null>(null);
+    const navigate = useNavigate();
 
     const { data: tournamentsData, isLoading } = useQuery({
         queryKey: ['tournaments'],
         queryFn: fetchTournaments,
         refetchInterval: 30000, // 30 seconds
+    });
+
+    // Mutation for registering for a tournament
+    const { mutate: registerTournament, isPending: isRegistering } = useMutation({
+        mutationFn: (tournamentId: number) => registerForTournament(tournamentId),
+        onSuccess: (data) => {
+            showSuccess('Successfully registered for the tournament!');
+            // Navigate to tournament or handle registration logic
+            navigate(`/tournaments/${data.tournament.id}`);
+        },
+        onError: (error: any) => {
+            // Handle specific error cases
+            if (error?.response?.status === 400) {
+                showError(error?.response?.data?.error || 'Failed to register for tournament');
+            } else if (error?.response?.status === 401) {
+                showError('You must be logged in to register for a tournament');
+                navigate('/login');
+            } else {
+                showError('Failed to register for tournament. Please try again.');
+            }
+        },
     });
 
     // Apply filters
@@ -36,9 +60,8 @@ export const TournamentsPage = () => {
 
     const handleConfirmRegistration = () => {
         if (selectedTournament) {
-            // Handle tournament registration logic
-            console.log('Register for tournament', selectedTournament.id);
-            setSelectedTournament(null);
+            // Register for the tournament using mutation
+            registerTournament(selectedTournament.id);
         }
     };
 
@@ -199,11 +222,19 @@ export const TournamentsPage = () => {
                                 <button
                                     className="btn-primary flex-1 py-3 rounded-xl"
                                     onClick={handleConfirmRegistration}
+                                    disabled={isRegistering}
                                 >
-                                    <span className="flex items-center justify-center gap-2">
-                                        <span className="material-icons-round text-lg">check</span>
-                                        Confirm Registration
-                                    </span>
+                                    {isRegistering ? (
+                                        <span className="flex items-center justify-center gap-2">
+                                            <span className="material-icons-round text-lg animate-spin">autorenew</span>
+                                            Registering...
+                                        </span>
+                                    ) : (
+                                        <span className="flex items-center justify-center gap-2">
+                                            <span className="material-icons-round text-lg">check</span>
+                                            Confirm Registration
+                                        </span>
+                                    )}
                                 </button>
                             </div>
                         </div>

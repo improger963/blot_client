@@ -99,6 +99,26 @@ export interface ReferralActivityItem {
 }
 
 /**
+ * @description Структура ответа от /api/referral/activity.
+ */
+export interface ReferralActivityResponse {
+    activity: ReferralActivityItem[];
+    meta: {
+        total_activity: number;
+        limit: number;
+    };
+}
+
+/**
+ * @description Структура ответа от /api/referral/links.
+ */
+export interface ReferralLinksResponse {
+    telegram: string;
+    web: string;
+    direct: string;
+}
+
+/**
  * @description Полная структура ответа от /api/referral.
  */
 export interface ReferralStatsResponse {

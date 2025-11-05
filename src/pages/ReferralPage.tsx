@@ -1,6 +1,6 @@
 // src/pages/ReferralPage.tsx
 import { useQuery } from '@tanstack/react-query';
-import { fetchReferralStats } from '../services/dataService';
+import { fetchReferralStats, fetchReferralActivity } from '../services/dataService';
 import { ReferralLinksCard } from '../components/ReferralLinksCard';
 import { ActivityRow } from '../components/ActivityRow';
 import { motion } from 'framer-motion';
@@ -8,12 +8,23 @@ import { UsersIcon, DollarIcon, ShareIcon } from '../components/icons';
 import { CardSkeleton } from '../components/ui/Skeleton';
 import { StatCard, Card } from '../components/ui';
 import type { ReferralActivityItem } from '../types/api';
+import { useAuthStore } from '../store/authStore';
 
 export const ReferralPage = () => {
-    const { data: referralData, isLoading } = useQuery({
+    const { user } = useAuthStore();
+    
+    // Fetch referral statistics
+    const { data: referralData, isLoading: isStatsLoading } = useQuery({
         queryKey: ['referralStats'],
         queryFn: fetchReferralStats,
         staleTime: 1000 * 60 * 30, // 30 minutes - данные рефералов меняются нечасто
+    });
+
+    // Fetch referral activity
+    const { data: activityData, isLoading: isActivityLoading } = useQuery({
+        queryKey: ['referralActivity'],
+        queryFn: fetchReferralActivity,
+        staleTime: 1000 * 60 * 5, // 5 minutes - активность обновляется чаще
     });
 
     return (
@@ -29,6 +40,13 @@ export const ReferralPage = () => {
                 <p className="body-1 text-lime-400/80 max-w-2xl mx-auto">
                     Invite friends and earn bonuses for their activity
                 </p>
+                {user && (
+                    <div className="mt-4">
+                        <p className="caption text-lime-400/80">
+                            Your referral code: <span className="font-mono font-bold">{user.referral_code}</span>
+                        </p>
+                    </div>
+                )}
             </motion.div>
 
             {/* Статистика */}
@@ -84,12 +102,12 @@ export const ReferralPage = () => {
                     </div>
 
                     <div className="space-y-3">
-                        {isLoading ? (
+                        {isActivityLoading ? (
                             Array.from({ length: 3 }).map((_, i) => (
                                 <CardSkeleton key={i} className="h-16" />
                             ))
-                        ) : referralData?.activity && referralData.activity.length > 0 ? (
-                            referralData.activity.map((item: ReferralActivityItem) => (
+                        ) : activityData?.activity && activityData.activity.length > 0 ? (
+                            activityData.activity.map((item: ReferralActivityItem) => (
                                 <ActivityRow key={item.id} activity={item} />
                             ))
                         ) : (

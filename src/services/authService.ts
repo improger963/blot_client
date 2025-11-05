@@ -4,6 +4,8 @@ import { api } from './api';
 import type { User } from '../types/user';
 
 interface LoginResponse {
+    success: boolean;
+    message: string;
     user: User;
 }
 
@@ -26,13 +28,17 @@ export const loginWithTelegram = async (initData: string): Promise<LoginResponse
     return data;
 };
 
-// ... функция getMe остается без изменений ...
+/**
+ * @description Запрашивает данные текущего пользователя.
+ */
 export const getMe = async (): Promise<User> => {
     const { data } = await api.get<User>('/user');
     return data;
 };
 
-// ... функция logoutUser остается без изменений ...
+/**
+ * @description Выполняет выход пользователя из системы.
+ */
 export const logoutUser = async (): Promise<void> => {
     await api.post('/auth/logout');
 };

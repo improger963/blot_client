@@ -1,7 +1,8 @@
 // src/pages/WalletPage.tsx
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchWalletBalance, fetchWalletHistory, fetchDepositConfig } from '../services/dataService';
+import { useAuthStore } from '../store/authStore';
+import { fetchWalletHistory, fetchDepositConfig } from '../services/dataService';
 import { EnhancedTransactionRow } from '../components/EnhancedTransactionRow';
 import { DepositFlow } from '../components/DepositFlow';
 import { WithdrawForm } from '../components/WithdrawForm';
@@ -12,21 +13,20 @@ import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { EnhancedStatsCard } from '../components/EnhancedStatsCard';
 import { motion } from 'framer-motion';
 import { DollarIcon, ArrowDownLeftIcon, ArrowUpRightIcon } from '../components/icons';
-import type { DepositConfigResponse, WalletBalanceResponse, WalletHistoryResponse } from '../types/api';
+import type { DepositConfigResponse, WalletHistoryResponse } from '../types/api';
 
 export const WalletPage = () => {
+    const { user } = useAuthStore();
     const [activeTab, setActiveTab] = useState<'deposit' | 'withdraw'>('deposit');
     const [isModalOpen, setModalOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
 
-    const { data: balanceData, isLoading: isBalanceLoading } = useQuery({
-        queryKey: ['walletBalance'],
-        queryFn: fetchWalletBalance,
-        staleTime: 1000 * 30, // 30 seconds - баланс обновляется чаще
-    });
+    // Use wallet balance from authStore
+    const walletBalance = user?.wallet?.balance ? parseFloat(user.wallet.balance) : 0;
 
-    const { data: historyData, isLoading: isHistoryLoading } = useQuery({
-        queryKey: ['walletHistory'],
-        queryFn: fetchWalletHistory,
+    const { data: historyData, isLoading: isHistoryLoading, refetch } = useQuery({
+        queryKey: ['walletHistory', currentPage],
+        queryFn: () => fetchWalletHistory(),
         // Использует глобальный staleTime (5 минут)
     });
 
@@ -39,6 +39,13 @@ export const WalletPage = () => {
 
     const handleModalClose = () => {
         setModalOpen(false);
+        // Refetch history when modal closes to show new transactions
+        refetch();
+    };
+
+    // Handle pagination
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
     };
 
     return (
@@ -68,11 +75,7 @@ export const WalletPage = () => {
                     </div>
                     <p className="caption text-lime-400/80 mb-2">Current Balance</p>
                     <p className="display-1 text-gradient mb-6">
-                        {isBalanceLoading ? (
-                            <span className="skeleton h-12 w-32 inline-block rounded-xl"></span>
-                        ) : (
-                            `${balanceData?.balance.toFixed(2) || '0.00'} TON`
-                        )}
+                        {walletBalance.toFixed(2)} TON
                     </p>
 
                     <div className="flex gap-4 max-w-md mx-auto">
@@ -158,6 +161,27 @@ export const WalletPage = () => {
                         </Card>
                     )}
                 </div>
+
+                {/* Pagination */}
+                {historyData && historyData.meta.total_pages > 1 && (
+                    <div className="flex justify-center mt-6">
+                        <div className="flex gap-2">
+                            {Array.from({ length: historyData.meta.total_pages }, (_, i) => i + 1).map((page) => (
+                                <button
+                                    key={page}
+                                    onClick={() => handlePageChange(page)}
+                                    className={`px-3 py-1 rounded-lg ${
+                                        page === currentPage
+                                            ? 'bg-lime-500 text-white'
+                                            : 'bg-card/50 text-gray-300 hover:bg-card/70'
+                                    }`}
+                                >
+                                    {page}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </motion.div>
 
             {/* Модальное окно для депозита/вывода */}

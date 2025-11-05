@@ -14,11 +14,11 @@ import { CopyIcon, CheckIcon, ArrowLeftIcon, WalletIcon, QrCodeIcon } from './ic
 import { GlassCard } from './ui/GlassCard';
 
 // --- Компонент Шага 1: Выбор способа оплаты ---
-const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigResponse, onSubmit: SubmitHandler<CreateDepositPayload>, isLoading: boolean }) => {
-  const { register, handleSubmit, watch, setValue, formState: { errors } } = useForm<CreateDepositPayload>({
+const Step1Form = ({ config, onSubmit, isLoading, errors }: { config: DepositConfigResponse, onSubmit: SubmitHandler<CreateDepositPayload>, isLoading: boolean, errors: any }) => {
+  const { register, handleSubmit, watch, setValue, formState: { errors: formErrors } } = useForm<CreateDepositPayload>({
     defaultValues: {
       amount: 100,
-      payment_method: config.payment_methods?.[0]?.id || ''
+      payment_method: config.payment_methods?.[0]?.id || 'ton'
     }
   });
   
@@ -49,15 +49,15 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
             <WalletIcon className="h-6 w-6 text-primary" />
           </motion.div>
         </div>
-        <h3 className="text-base sm:text-lg font-semibold text-white">Пополнение баланса</h3>
+        <h3 className="text-base sm:text-lg font-semibold text-white">Deposit Funds</h3>
         <p className="text-xs sm:text-sm text-gray-400">
-          Выберите сумму и способ оплаты
+          Select amount and payment method
         </p>
       </div>
 
       {/* Блок выбора суммы */}
       <div className="space-y-4">
-        <h4 className="text-xs sm:text-sm font-medium text-white">💰 Сумма пополнения</h4>
+        <h4 className="text-xs sm:text-sm font-medium text-white">💰 Deposit Amount</h4>
         
         {/* Пресеты сумм */}
         <div className="grid grid-cols-5 gap-2">
@@ -85,29 +85,29 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
           type="number"
           step="0.01"
           variant="filled"
-          error={errors.amount?.message}
-          placeholder={`От ${config.min_amount} до ${config.max_amount} USD`}
+          error={formErrors.amount?.message || errors?.amount?.[0]}
+          placeholder={`From ${config.min_amount} to ${config.max_amount} USD`}
           {...register('amount', {
-            required: 'Сумма обязательна',
+            required: 'Amount is required',
             valueAsNumber: true,
-            min: { value: config.min_amount, message: `Минимальная сумма: ${config.min_amount}` },
-            max: { value: config.max_amount, message: `Максимальная сумма: ${config.max_amount}` },
+            min: { value: config.min_amount, message: `Minimum amount: ${config.min_amount}` },
+            max: { value: config.max_amount, message: `Maximum amount: ${config.max_amount}` },
           })}
         />
-        {errors.amount && (
+        {(formErrors.amount || errors?.amount) && (
           <motion.p
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-sm text-red-400 flex items-center gap-1"
           >
-            ⚠️ {errors.amount.message}
+            ⚠️ {formErrors.amount?.message || errors?.amount?.[0]}
           </motion.p>
         )}
       </div>
 
       {/* Выбор валюты */}
       <div className="space-y-3">
-        <h4 className="text-xs sm:text-sm font-medium text-white">💱 Валюта депозита</h4>
+        <h4 className="text-xs sm:text-sm font-medium text-white">💱 Deposit Currency</h4>
         <div className="grid grid-cols-2 gap-3">
           <button
             type="button"
@@ -148,6 +148,15 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
           <option value="ton">TON</option>
           <option value="usdt">USDT TON</option>
         </select>
+        {errors?.payment_method && (
+          <motion.p
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-sm text-red-400 flex items-center gap-1"
+          >
+            ⚠️ {errors?.payment_method?.[0]}
+          </motion.p>
+        )}
       </div>
 
       {/* Блок шагов */}
@@ -168,7 +177,7 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
       {/* Кнопки */}
       <div className="grid grid-cols-2 gap-3">
         <Button variant="secondary" className="h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold">
-          Назад
+          Back
         </Button>
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Button
@@ -176,7 +185,7 @@ const Step1Form = ({ config, onSubmit, isLoading }: { config: DepositConfigRespo
             className="w-full h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold shadow-lg glass-button text-white hover:translate-y-[-2px]"
             isLoading={isLoading}
           >
-            {isLoading ? 'Обработка...' : 'Продолжить'}
+            {isLoading ? 'Processing...' : 'Continue'}
           </Button>
         </motion.div>
       </div>
@@ -217,9 +226,9 @@ const Step2Instructions = ({ address, amount, onBack }: { address: string, amoun
             <QrCodeIcon className="h-6 w-6 text-primary" />
           </motion.div>
         </div>
-        <h3 className="text-base sm:text-lg font-semibold text-white">Отправить</h3>
+        <h3 className="text-base sm:text-lg font-semibold text-white">Send Payment</h3>
         <p className="text-xs sm:text-sm text-gray-400">
-          Отправьте точную сумму на адрес ниже
+          Send the exact amount to the address below
         </p>
       </div>
 
@@ -242,19 +251,19 @@ const Step2Instructions = ({ address, amount, onBack }: { address: string, amoun
       <GlassCard className="rounded-xl p-4">
         <div className="flex justify-between items-center">
           <div>
-            <p className="text-[0.65rem] sm:text-xs text-gray-400">Сумма</p>
+            <p className="text-[0.65rem] sm:text-xs text-gray-400">Amount</p>
             <p className="text-base sm:text-lg font-bold text-white">${amount.toFixed(2)}</p>
           </div>
           <Button 
             onClick={handleCopyAmount}
             className="h-8 rounded-lg px-3 text-xs font-medium glass-card text-gray-200 hover:bg-white/10"
           >
-            {isCopied && copiedText === amount.toString() ? '✓ Скопировано' : '📋 Копировать'}
+            {isCopied && copiedText === amount.toString() ? '✓ Copied' : '📋 Copy'}
           </Button>
         </div>
         <div className="mt-3 p-3 rounded-lg bg-yellow-500/10">
           <p className="text-[0.65rem] sm:text-xs text-yellow-500 flex items-center gap-1">
-            ⚠️ Отправьте точную сумму, иначе транзакция не будет зачислена
+            ⚠️ Send the exact amount, otherwise the transaction will not be credited
           </p>
         </div>
       </GlassCard>
@@ -268,7 +277,7 @@ const Step2Instructions = ({ address, amount, onBack }: { address: string, amoun
         </div>
         
         <div className="space-y-3">
-          <p className="text-xs sm:text-sm font-medium text-white text-center">Адрес кошелька</p>
+          <p className="text-xs sm:text-sm font-medium text-white text-center">Wallet Address</p>
           <div className="relative">
             <div className="break-words rounded-lg sm:rounded-xl bg-card/50 p-3 sm:p-4 font-mono text-xs sm:text-sm text-white pr-10 sm:pr-12">
               {address}
@@ -294,7 +303,7 @@ const Step2Instructions = ({ address, amount, onBack }: { address: string, amoun
             className="w-full h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold flex items-center justify-center"
           >
             <ArrowLeftIcon className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-            Назад
+            Back
           </Button>
         </motion.div>
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.95 }}>
@@ -302,7 +311,7 @@ const Step2Instructions = ({ address, amount, onBack }: { address: string, amoun
             onClick={handleCopyAddress}
             className="w-full h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base font-semibold shadow-lg glass-button text-white hover:translate-y-[-2px]"
           >
-            {isCopied && copiedText === address ? '✓ Скопировано' : '📋 Копировать адрес'}
+            {isCopied && copiedText === address ? '✓ Copied' : '📋 Copy Address'}
           </Button>
         </motion.div>
       </div>
@@ -314,29 +323,43 @@ const Step2Instructions = ({ address, amount, onBack }: { address: string, amoun
 export const DepositFlow = ({ onSuccess, config, isLoadingConfig }: { onSuccess?: () => void, config: DepositConfigResponse | undefined, isLoadingConfig: boolean }) => {
     const [step, setStep] = useState(1);
     const [depositDetails, setDepositDetails] = useState<{ deposit_address: string; amount: number } | null>(null);
+    const [errors, setErrors] = useState<any>(null);
     const queryClient = useQueryClient();
 
     const { mutate, isPending } = useMutation({
         mutationFn: (payload: CreateDepositPayload) => createDepositRequest(payload),
         onSuccess: (data) => {
-            showSuccess('Адрес для пополнения сгенерирован!');
+            setErrors(null);
+            showSuccess(data.message || 'Deposit address generated!');
             setDepositDetails(data);
             setStep(2);
             queryClient.invalidateQueries({ queryKey: ['walletHistory'] });
+            queryClient.invalidateQueries({ queryKey: ['user'] });
             if (onSuccess) {
                 onSuccess();
             }
         },
-        onError: (err) => showError(err.message),
+        onError: (error: any) => {
+            // Handle validation errors (422)
+            if (error?.response?.status === 422) {
+                const validationErrors = error.response.data.errors;
+                setErrors(validationErrors);
+            } else {
+                setErrors(null);
+                showError(error?.response?.data?.message || error.message || 'Failed to generate deposit address');
+            }
+        },
     });
 
     const handleFormSubmit: SubmitHandler<CreateDepositPayload> = (data) => {
+        setErrors(null);
         mutate(data);
     };
 
     const handleBack = () => {
         setStep(1);
         setDepositDetails(null);
+        setErrors(null);
     };
 
     if (isLoadingConfig) {
@@ -354,10 +377,10 @@ export const DepositFlow = ({ onSuccess, config, isLoadingConfig }: { onSuccess?
         return (
             <div className="text-center space-y-4 py-8">
                 <div className="text-red-400 text-4xl">⚠️</div>
-                <h3 className="text-lg font-semibold text-white">Ошибка загрузки</h3>
-                <p className="text-sm text-gray-400">Не удалось загрузить способы оплаты</p>
+                <h3 className="text-lg font-semibold text-white">Loading Error</h3>
+                <p className="text-sm text-gray-400">Failed to load payment methods</p>
                 <Button onClick={() => window.location.reload()} variant="secondary">
-                    Попробовать снова
+                    Try Again
                 </Button>
             </div>
         );
@@ -372,6 +395,7 @@ export const DepositFlow = ({ onSuccess, config, isLoadingConfig }: { onSuccess?
                         config={config}
                         onSubmit={handleFormSubmit}
                         isLoading={isPending}
+                        errors={errors}
                     />
                 )}
                 {step === 2 && depositDetails && (

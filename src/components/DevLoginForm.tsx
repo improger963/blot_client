@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAuthStore } from '../store/authStore';
 import { Card } from './ui';
 import { InputField } from './ui';
 import { Button } from './ui';
@@ -12,7 +11,6 @@ interface DevLoginFormProps {
 export const DevLoginForm = ({ onLogin, isPending = false }: DevLoginFormProps) => {
   const [initData, setInitData] = useState('');
   const [error, setError] = useState('');
-  const { setUser } = useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
