@@ -25,14 +25,14 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     variant = 'default',
     ...props 
   }, ref) => {
-    // Base input classes
-    const baseClasses = 'input-field transition-all duration-200 backdrop-blur-sm';
+    // Base input classes with unified border styles
+    const baseClasses = 'input-field transition-all duration-200 backdrop-blur-sm rounded-lg';
     
-    // Variant classes
+    // Variant classes - using gradient borders instead of standard borders
     const variantClasses = {
       default: '',
       filled: 'bg-[hsl(var(--color-surface)/0.8)]',
-      outlined: 'bg-transparent border-2'
+      outlined: 'bg-transparent'
     }[variant];
     
     const errorClasses = error ? 'border-red-500 focus:ring-red-500' : '';
@@ -41,6 +41,15 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
 
     const inputClasses = twMerge(
       clsx(baseClasses, variantClasses, errorClasses, widthClasses, glowClasses, className)
+    );
+
+    // For outlined variant, wrap in gradient border container
+    const renderInput = () => (
+      <input
+        ref={ref}
+        className={`${inputClasses} ${leftIcon ? 'pl-10' : ''} ${rightIcon ? 'pr-10' : ''}`}
+        {...props}
+      />
     );
 
     return (
@@ -56,11 +65,13 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               {leftIcon}
             </div>
           )}
-          <input
-            ref={ref}
-            className={`${inputClasses} ${leftIcon ? 'pl-10' : ''} ${rightIcon ? 'pr-10' : ''}`}
-            {...props}
-          />
+          {variant === 'outlined' ? (
+            <div className="gradient-border-container-input">
+              {renderInput()}
+            </div>
+          ) : (
+            renderInput()
+          )}
           {rightIcon && (
             <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted">
               {rightIcon}

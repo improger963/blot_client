@@ -75,43 +75,6 @@ export const HomePage = () => {
         </p>
       </motion.div>
 
-      {/* Quick Stats */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-      >
-        <ResponsiveGrid 
-          cols={{ xs: 2, sm: 2, md: 4 }} 
-          gap="sm"
-        >
-          <StatCard
-            icon={<span className="material-icons-round">groups</span>}
-            label="Active Players"
-            value="2.4K"
-            trend={{ value: 12, label: '24h' }}
-          />
-          <StatCard
-            icon={<span className="material-icons-round">payments</span>}
-            label="Total Prizes"
-            value="125.6K TON"
-            trend={{ value: 8, label: '24h' }}
-          />
-          <StatCard
-            icon={<span className="material-icons-round">schedule</span>}
-            label="Avg. Wait Time"
-            value="45s"
-            trend={{ value: -15, label: '24h' }}
-          />
-          <StatCard
-            icon={<span className="material-icons-round">casino</span>}
-            label="Active Tables"
-            value="127"
-            trend={{ value: 5, label: '24h' }}
-          />
-        </ResponsiveGrid>
-      </motion.div>
-
       {/* Featured Poker Rooms */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}

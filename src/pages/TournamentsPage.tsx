@@ -82,29 +82,31 @@ export const TournamentsPage = () => {
             </motion.div>
 
             {/* Filter Tabs */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="tab-container flex gap-1 p-1 glass-card rounded-2xl max-w-md mx-auto border border-lime-500/20"
-            >
-                {filterTabs.map(filterItem => (
-                    <button
-                        key={filterItem.id}
-                        onClick={() => setActiveFilter(filterItem.id as 'poker' | 'blot')}
-                        className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
-                            activeFilter === filterItem.id
-                                ? 'tab-active text-white'
-                                : 'tab-button text-gray-400'
-                        }`}
-                    >
-                        <span className="material-icons-round text-lg">
-                            {filterItem.icon}
-                        </span>
-                        <span className="caption hidden sm:block">{filterItem.label}</span>
-                    </button>
-                ))}
-            </motion.div>
+            <div className="gradient-border-container-tab max-w-md mx-auto rounded-2xl">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="tab-container flex gap-1 p-1 glass-card rounded-2xl max-w-md mx-auto"
+                >
+                    {filterTabs.map(filterItem => (
+                        <button
+                            key={filterItem.id}
+                            onClick={() => setActiveFilter(filterItem.id as 'poker' | 'blot')}
+                            className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                                activeFilter === filterItem.id
+                                    ? 'tab-active text-white'
+                                    : 'tab-button text-gray-400'
+                            }`}
+                        >
+                            <span className="material-icons-round text-lg">
+                                {filterItem.icon}
+                            </span>
+                            <span className="caption hidden sm:block">{filterItem.label}</span>
+                        </button>
+                    ))}
+                </motion.div>
+            </div>
 
             {/* Tournaments list */}
             <motion.div
@@ -140,39 +142,6 @@ export const TournamentsPage = () => {
                         </p>
                     </Card>
                 )}
-            </motion.div>
-
-            {/* Quick Stats */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4"
-            >
-                <EnhancedStatsCard
-                    icon="emoji_events"
-                    label="Active Tournaments"
-                    value="24"
-                    trend={{ value: 5, period: '24h' }}
-                />
-                <EnhancedStatsCard
-                    icon="payments"
-                    label="Total Prizes"
-                    value="125.6K TON"
-                    trend={{ value: 12, period: '24h' }}
-                />
-                <EnhancedStatsCard
-                    icon="groups"
-                    label="Registered Players"
-                    value="8.2K"
-                    trend={{ value: 8, period: '24h' }}
-                />
-                <EnhancedStatsCard
-                    icon="leaderboard"
-                    label="Top Prize"
-                    value="25K TON"
-                    trend={{ value: 0, period: '24h' }}
-                />
             </motion.div>
 
             {/* Registration Modal */}

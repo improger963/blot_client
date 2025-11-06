@@ -6,7 +6,7 @@ import { fetchGameRooms, joinGameRoom } from '../services/dataService';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { EnhancedPokerRoomCard } from '../components/EnhancedPokerRoomCard';
-import { Card, StatCard } from '../components/ui';
+import { Button, Card, StatCard } from '../components/ui';
 import { LoadingSkeleton } from '../components/LoadingSkeleton';
 import { ResponsiveGrid } from '../components/layout';
 import { getStakeAsNumber } from '../utils/game';
@@ -93,29 +93,31 @@ export const PokerPage = () => {
             </motion.div>
 
             {/* Filter Tabs */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="tab-container flex gap-1 p-1 glass-card rounded-2xl max-w-md mx-auto border border-lime-500/20"
-            >
-                {filterTabs.map(filterItem => (
-                    <button
-                        key={filterItem.id}
-                        onClick={() => setActiveFilter(filterItem.id as 'low' | 'mid' | 'vip')}
-                        className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
-                            activeFilter === filterItem.id
-                                ? 'tab-active text-white'
-                                : 'tab-button text-gray-400'
-                        }`}
-                    >
-                        <span className="material-icons-round text-lg">
-                            {filterItem.icon}
-                        </span>
-                        <span className="caption hidden sm:block">{filterItem.label}</span>
-                    </button>
-                ))}
-            </motion.div>
+            <div className="gradient-border-container-tab max-w-md mx-auto rounded-2xl">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="tab-container flex gap-1 p-1 glass-card rounded-2xl max-w-md mx-auto"
+                >
+                    {filterTabs.map(filterItem => (
+                        <button
+                            key={filterItem.id}
+                            onClick={() => setActiveFilter(filterItem.id as 'low' | 'mid' | 'vip')}
+                            className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                                activeFilter === filterItem.id
+                                    ? 'tab-active text-white'
+                                    : 'tab-button text-gray-400'
+                            }`}
+                        >
+                            <span className="material-icons-round text-lg">
+                                {filterItem.icon}
+                            </span>
+                            <span className="caption hidden sm:block">{filterItem.label}</span>
+                        </button>
+                    ))}
+                </motion.div>
+            </div>
 
             {/* Game rooms grid */}
             <motion.div
@@ -157,43 +159,6 @@ export const PokerPage = () => {
                 )}
             </motion.div>
 
-            {/* Quick Stats */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-            >
-                <ResponsiveGrid 
-                    cols={{ xs: 2, sm: 2, md: 4 }} 
-                    gap="sm"
-                >
-                    <StatCard
-                        icon={<span className="material-icons-round">groups</span>}
-                        label="Active Players"
-                        value="2.4K"
-                        trend={{ value: 12, label: '24h' }}
-                    />
-                    <StatCard
-                        icon={<span className="material-icons-round">payments</span>}
-                        label="Total Prize"
-                        value="45.2K TON"
-                        trend={{ value: 8, label: '24h' }}
-                    />
-                    <StatCard
-                        icon={<span className="material-icons-round">schedule</span>}
-                        label="Avg. Wait Time"
-                        value="45s"
-                        trend={{ value: -15, label: '24h' }}
-                    />
-                    <StatCard
-                        icon={<span className="material-icons-round">casino</span>}
-                        label="Active Tables"
-                        value="127"
-                        trend={{ value: 5, label: '24h' }}
-                    />
-                </ResponsiveGrid>
-            </motion.div>
-
             {/* Room Join Modal */}
             {selectedRoom && (
                 <div 
@@ -232,29 +197,31 @@ export const PokerPage = () => {
                             </div>
 
                             <div className="flex gap-3">
-                                <button
-                                    className="btn-secondary flex-1 py-3 rounded-xl"
-                                    onClick={() => setSelectedRoom(null)}
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    className="btn-primary flex-1 py-3 rounded-xl"
-                                    onClick={handleConfirmJoin}
-                                    disabled={isJoining}
-                                >
-                                    {isJoining ? (
-                                        <span className="flex items-center justify-center gap-2">
-                                            <span className="material-icons-round text-lg animate-spin">autorenew</span>
-                                            Joining...
-                                        </span>
-                                    ) : (
-                                        <span className="flex items-center justify-center gap-2">
-                                            <span className="material-icons-round text-lg">login</span>
-                                            Join Game
-                                        </span>
-                                    )}
-                                </button>
+                              <Button
+                                variant="secondary"
+                                className="flex-1"
+                                onClick={() => setSelectedRoom(null)}
+                              >
+                                Cancel
+                              </Button>
+                              <Button
+                                variant="primary"
+                                className="flex-1"
+                                onClick={handleConfirmJoin}
+                                disabled={isJoining}
+                              >
+                                {isJoining ? (
+                                  <>
+                                    <span className="material-icons-round text-lg animate-spin">autorenew</span>
+                                    Joining...
+                                  </>
+                                ) : (
+                                  <>
+                                    <span className="material-icons-round text-lg">login</span>
+                                    Join Game
+                                  </>
+                                )}
+                              </Button>
                             </div>
                         </div>
                     </div>

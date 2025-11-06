@@ -19,13 +19,13 @@ export const InputField = ({
   ...props 
 }: InputFieldProps) => {
   // Base input classes with premium styling
-  const baseClasses = `w-full glass-card text-white rounded-xl transition-all duration-300 focus:outline-none backdrop-blur-sm`;
+  const baseClasses = `w-full glass-card text-white rounded-lg transition-all duration-300 focus:outline-none backdrop-blur-sm`;
   
-  // Variant classes
+  // Variant classes - using gradient borders instead of standard borders
   const variantClasses = {
-    default: 'bg-[hsl(var(--color-surface)/0.8)] border-2',
+    default: 'bg-[hsl(var(--color-surface)/0.8)]',
     filled: 'bg-[hsl(var(--color-surface)/0.8)]',
-    outlined: 'bg-transparent border-2'
+    outlined: 'bg-transparent'
   }[variant];
   
   // Glow effect class
@@ -46,10 +46,19 @@ export const InputField = ({
             {icon}
           </div>
         )}
-        <input
-          className={`${inputClasses} ${icon ? 'pl-12' : 'pl-4'} pr-4 py-3 border-[hsl(var(--color-primary)/0.25)] focus:border-[hsl(var(--color-primary))] focus:bg-[hsl(var(--color-surface)/0.9)]`}
-          {...props}
-        />
+        {variant === 'outlined' ? (
+          <div className="gradient-border-container-input">
+            <input
+              className={`${inputClasses} ${icon ? 'pl-12' : 'pl-4'} pr-4 py-3 focus:border-[hsl(var(--color-primary))] focus:bg-[hsl(var(--color-surface)/0.9)]`}
+              {...props}
+            />
+          </div>
+        ) : (
+          <input
+            className={`${inputClasses} ${icon ? 'pl-12' : 'pl-4'} pr-4 py-3 focus:border-[hsl(var(--color-primary))] focus:bg-[hsl(var(--color-surface)/0.9)]`}
+            {...props}
+          />
+        )}
       </div>
       {error && (
         <p className="text-xs text-error mt-1 font-medium">{error}</p>

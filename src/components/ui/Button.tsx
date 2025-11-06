@@ -79,12 +79,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       success: 'bg-gradient-to-r from-green-500 to-emerald-600 text-white'
     };
 
-    // Styles for different sizes - responsive
+    // Styles for different sizes - responsive with unified border radius
     const sizeStyles: Record<ButtonSize, string> = {
-      sm: 'h-8 px-3 text-[0.65rem] sm:text-xs gap-1.5 rounded-xl font-semibold',
-      md: 'h-11 px-5 text-[0.65rem] sm:text-xs gap-2 rounded-xl font-semibold',
-      lg: 'h-14 px-8 text-[0.65rem] sm:text-xs gap-2.5 rounded-2xl font-bold',
-      icon: 'h-11 w-11 rounded-xl',
+      sm: 'h-8 px-3 text-[0.65rem] sm:text-xs gap-1.5 rounded-lg font-semibold',
+      md: 'h-11 px-5 text-[0.65rem] sm:text-xs gap-2 rounded-lg font-semibold',
+      lg: 'h-14 px-8 text-[0.65rem] sm:text-xs gap-2.5 rounded-xl font-bold',
+      icon: 'h-11 w-11 rounded-lg',
     };
 
     // Glow effect class
@@ -117,6 +117,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
+
 Button.displayName = 'Button';
 
 /**

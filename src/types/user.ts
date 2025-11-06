@@ -29,6 +29,10 @@ export interface User {
     avatar: string;
     email: string | null;
     referral_code: string;
+    is_premium: boolean;
+    referrer_id: number | null;
+    is_pin_enabled: boolean;
+    banned_at: string | null;
     wallet: Wallet;
     socialAccounts: SocialAccount[];
 }

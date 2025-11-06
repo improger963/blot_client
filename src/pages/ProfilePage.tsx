@@ -44,64 +44,37 @@ export const ProfilePage = () => {
                 <EnhancedProfileHeader />
             </motion.section>
 
-            {/* Quick Stats */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4"
-            >
-                <EnhancedStatsCard
-                    icon="sports_esports"
-                    label="Games Played"
-                    value="127"
-                />
-                <EnhancedStatsCard
-                    icon="emoji_events"
-                    label="Total Winnings"
-                    value="2,450 TON"
-                />
-                <EnhancedStatsCard
-                    icon="trending_up"
-                    label="Win Rate"
-                    value="64%"
-                />
-                <EnhancedStatsCard
-                    icon="leaderboard"
-                    label="Current Rank"
-                    value="#42"
-                />
-            </motion.div>
-
             {/* Profile Tabs */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
             >
-                <div className="tab-container flex gap-1 p-1 glass-card rounded-2xl max-w-md mx-auto border border-lime-500/20">
-                    <button
-                        onClick={() => setActiveTab('security')}
-                        className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
-                            activeTab === 'security'
-                                ? 'tab-active text-white'
-                                : 'tab-button text-gray-400'
-                        }`}
-                    >
-                        <span className="material-icons-round text-lg">security</span>
-                        <span className="caption hidden sm:block">Security</span>
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('password')}
-                        className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
-                            activeTab === 'password'
-                                ? 'tab-active text-white'
-                                : 'tab-button text-gray-400'
-                        }`}
-                    >
-                        <KeyIcon className="h-4 w-4" />
-                        <span className="caption hidden sm:block">Password</span>
-                    </button>
+                <div className="gradient-border-container-tab max-w-md mx-auto rounded-2xl">
+                    <div className="tab-container flex gap-1 p-1 glass-card rounded-2xl max-w-md mx-auto">
+                        <button
+                            onClick={() => setActiveTab('security')}
+                            className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                                activeTab === 'security'
+                                    ? 'tab-active text-white'
+                                    : 'tab-button text-gray-400'
+                            }`}
+                        >
+                            <span className="material-icons-round text-lg">security</span>
+                            <span className="caption hidden sm:block">Security</span>
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('password')}
+                            className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                                activeTab === 'password'
+                                    ? 'tab-active text-white'
+                                    : 'tab-button text-gray-400'
+                            }`}
+                        >
+                            <KeyIcon className="h-4 w-4" />
+                            <span className="caption hidden sm:block">Password</span>
+                        </button>
+                    </div>
                 </div>
 
                 {/* Tab Content */}

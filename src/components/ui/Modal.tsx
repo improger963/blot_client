@@ -85,30 +85,35 @@ export const Modal = ({ isOpen, onClose, title, children, size = 'md' }: ModalPr
               duration: 0.4
             }}
             onClick={(e) => e.stopPropagation()}
-            className={`relative w-full ${sizeClasses[size]} rounded-2xl glass-card`}
+            className={`relative w-full ${sizeClasses[size]} rounded-xl`}
           >
-            {/* Заголовок модалки */}
-            <div className="flex items-center justify-between p-6">
-              <h2 className="text-xl font-bold text-white">{title}</h2>
-              <motion.button
-                whileHover={{ scale: 1.1, rotate: 90 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={onClose}
-                className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-all duration-200 hover:bg-card/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-              >
-                <XIcon className="h-4 w-4" />
-              </motion.button>
-            </div>
+            {/* Gradient border container for the modal */}
+            <div className="gradient-border-container-modal rounded-xl">
+              <div className="glass-card rounded-xl">
+                {/* Заголовок модалки */}
+                <div className="flex items-center justify-between p-6">
+                  <h2 className="text-xl font-bold text-white">{title}</h2>
+                  <motion.button
+                    whileHover={{ scale: 1.1, rotate: 90 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={onClose}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-all duration-200 hover:bg-card/50 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                  >
+                    <XIcon className="h-4 w-4" />
+                  </motion.button>
+                </div>
 
-            {/* Контент модалки */}
-            <div className="max-h-[70vh] overflow-y-auto">
-              <div className="p-6">
-                {children}
+                {/* Контент модалки */}
+                <div className="max-h-[70vh] overflow-y-auto">
+                  <div className="p-6">
+                    {children}
+                  </div>
+                </div>
+
+                {/* Декоративный акцент */}
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-600 rounded-t-xl" />
               </div>
             </div>
-
-            {/* Декоративный акцент */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-purple-500 to-pink-600 rounded-t-2xl" />
           </motion.div>
         </motion.div>
       )}

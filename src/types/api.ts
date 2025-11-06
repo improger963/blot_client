@@ -133,6 +133,19 @@ export interface ReferralStatsResponse {
         direct: string;
     };
     activity: ReferralActivityItem[];
+    stats: {
+        total_earnings: number;
+        active_referrals: number;
+        total_transactions: number;
+        average_earning: number;
+        max_earning: number;
+        conversion_rate: number;
+        formatted_conversion_rate: string;
+    };
+    share_content: {
+        message: string;
+        title: string;
+    };
 }
 
 /**
@@ -201,17 +214,4 @@ export interface DepositConfigResponse {
  */
 export interface CreateDepositPayload {
     amount: number;
-    payment_method: string; // ID платежной системы
-}
-
-/**
- * @description Ответ от POST /api/wallet/deposit, теперь с адресом
- */
-export interface CreateDepositResponse {
-    message: string;
-    transaction_id: number;
-    amount: number;
-    status: 'pending';
-    // Ключевое поле - уникальный адрес для этой транзакции
-    deposit_address: string;
 }

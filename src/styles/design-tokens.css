@@ -149,23 +149,34 @@
   --spacing-2xl: 3rem;     /* 48px */
   --spacing-3xl: 4rem;     /* 64px */
 
-  /* --- BORDER RADIUS --- */
-  --radius-xs: 0.25rem;   /* 4px */
-  --radius-sm: 0.5rem;    /* 8px */
-  --radius-md: 0.75rem;   /* 12px */
-  --radius-lg: 1rem;      /* 16px */
-  --radius-xl: 1.5rem;    /* 24px */
-  --radius-2xl: 2rem;     /* 32px */
-  --radius-3xl: 2.5rem;   /* 40px */
+  /* --- BORDER RADIUS SCALE (Standardized) --- */
+  --radius-xs: 0.25rem;   /* 4px - Small elements like badges */
+  --radius-sm: 0.5rem;    /* 8px - Small components like buttons */
+  --radius-md: 0.75rem;   /* 12px - Medium components like inputs */
+  --radius-lg: 1rem;      /* 16px - Large components like cards */
+  --radius-xl: 1.25rem;   /* 20px - Extra large components */
+  --radius-2xl: 1.5rem;   /* 24px - Modal dialogs */
+  --radius-3xl: 1.75rem;  /* 28px - Page sections */
+  --radius-full: 9999px;  /* Fully rounded elements */
 
-  /* --- SHADOWS & GLOW EFFECTS --- */
-  --shadow-primary: 0 0 15px hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l) / 0.3);
-  --shadow-secondary: 0 0 15px hsl(var(--color-secondary-h) var(--color-secondary-s) var(--color-secondary-l) / 0.3);
+  /* --- SHADOW SCALE (Standardized) --- */
+  --shadow-xs: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+  --shadow-sm: 0 1px 3px 0 hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
+  --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
+  --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.1), 0 8px 10px -6px hsl(0 0% 0% / 0.1);
+  --shadow-2xl: 0 25px 50px -12px hsl(0 0% 0% / 0.25);
+  --shadow-inner: inset 0 2px 4px 0 hsl(0 0% 0% / 0.05);
+  --shadow-none: 0 0 #0000;
+  
+  /* Custom shadows for specific components */
+  --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.2);
+  --shadow-premium: 0 10px 30px hsl(0 0% 0% / 0.25), 0 0 0 1px hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l) / 0.1);
   --shadow-glow: 0 0 20px hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l) / 0.4);
   --shadow-elevated: 0 8px 24px hsl(0 0% 0% / 0.4);
   --shadow-card: 0 4px 12px hsl(0 0% 0% / 0.3);
-  --shadow-glass: 0 8px 32px hsl(0 0% 0% / 0.2);
-  --shadow-premium: 0 10px 30px hsl(0 0% 0% / 0.25), 0 0 0 1px hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l) / 0.1);
+  --shadow-primary: 0 0 15px hsl(var(--color-primary-h) var(--color-primary-s) var(--color-primary-l) / 0.3);
+  --shadow-secondary: 0 0 15px hsl(var(--color-secondary-h) var(--color-secondary-s) var(--color-secondary-l) / 0.3);
 
   /* --- TRANSITIONS & ANIMATIONS --- */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);

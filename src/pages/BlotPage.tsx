@@ -56,29 +56,31 @@ export const BlotPage = () => {
             </motion.div>
 
             {/* Filter Tabs */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-                className="tab-container flex gap-1 p-1 glass-card rounded-2xl max-w-md mx-auto border border-lime-500/20"
-            >
-                {filterTabs.map(filterItem => (
-                    <button
-                        key={filterItem.id}
-                        onClick={() => setActiveFilter(filterItem.id as 'low' | 'mid' | 'vip')}
-                        className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
-                            activeFilter === filterItem.id
-                                ? 'tab-active text-white'
-                                : 'tab-button text-gray-400'
-                        }`}
-                    >
-                        <span className="material-icons-round text-lg">
-                            {filterItem.icon}
-                        </span>
-                        <span className="caption hidden sm:block">{filterItem.label}</span>
-                    </button>
-                ))}
-            </motion.div>
+            <div className="gradient-border-container-tab max-w-md mx-auto rounded-2xl">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.1 }}
+                    className="tab-container flex gap-1 p-1 glass-card rounded-2xl max-w-md mx-auto"
+                >
+                    {filterTabs.map(filterItem => (
+                        <button
+                            key={filterItem.id}
+                            onClick={() => setActiveFilter(filterItem.id as 'low' | 'mid' | 'vip')}
+                            className={`flex-1 py-3 px-4 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
+                                activeFilter === filterItem.id
+                                    ? 'tab-active text-white'
+                                    : 'tab-button text-gray-400'
+                            }`}
+                        >
+                            <span className="material-icons-round text-lg">
+                                {filterItem.icon}
+                            </span>
+                            <span className="caption hidden sm:block">{filterItem.label}</span>
+                        </button>
+                    ))}
+                </motion.div>
+            </div>
 
             {/* Game rooms table */}
             <motion.div
@@ -111,39 +113,6 @@ export const BlotPage = () => {
                         </div>
                     )}
                 </Card>
-            </motion.div>
-
-            {/* Quick Stats */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4"
-            >
-                <EnhancedStatsCard
-                    icon="groups"
-                    label="Active Players"
-                    value="1.8K"
-                    trend={{ value: 8, period: '24h' }}
-                />
-                <EnhancedStatsCard
-                    icon="payments"
-                    label="Total Prize"
-                    value="32.5K TON"
-                    trend={{ value: 12, period: '24h' }}
-                />
-                <EnhancedStatsCard
-                    icon="schedule"
-                    label="Avg. Wait Time"
-                    value="32s"
-                    trend={{ value: -10, period: '24h' }}
-                />
-                <EnhancedStatsCard
-                    icon="casino"
-                    label="Active Tables"
-                    value="89"
-                    trend={{ value: 3, period: '24h' }}
-                />
             </motion.div>
         </div>
     );

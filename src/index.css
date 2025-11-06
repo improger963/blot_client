@@ -42,15 +42,24 @@
   --radius-xl: var(--radius-xl);
   --radius-2xl: var(--radius-2xl);
   --radius-3xl: var(--radius-3xl);
+  --radius-full: var(--radius-full);
 
   /* --- SHADOWS AND GLOW --- */
-  --shadow-primary: var(--shadow-primary);
-  --shadow-secondary: var(--shadow-secondary);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+  --shadow-inner: var(--shadow-inner);
+  --shadow-none: var(--shadow-none);
+  --shadow-glass: var(--shadow-glass);
+  --shadow-premium: var(--shadow-premium);
   --shadow-glow: var(--shadow-glow);
   --shadow-elevated: var(--shadow-elevated);
   --shadow-card: var(--shadow-card);
-  --shadow-glass: var(--shadow-glass);
-  --shadow-premium: var(--shadow-premium);
+  --shadow-primary: var(--shadow-primary);
+  --shadow-secondary: var(--shadow-secondary);
 }
 
 @layer base {
@@ -270,6 +279,15 @@
     }
   }
 
+  @keyframes animated-border {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 200% 50%;
+    }
+  }
+
   .animate-in {
     animation: fade-in 0.7s cubic-bezier(0.16, 1, 0.3, 1);
   }
@@ -298,17 +316,15 @@
     background: hsl(var(--color-surface) / 0.85);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border-radius: var(--radius-3xl);
+    border-radius: var(--radius-2xl);
     box-shadow: var(--shadow-glass);
-    border: 1px solid hsl(var(--color-primary) / 0.1);
   }
 
   .glass-card {
     background: hsl(var(--color-card) / 0.75);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border: 1px solid hsl(var(--color-primary) / 0.1);
-    border-radius: var(--radius-2xl);
+    border-radius: var(--radius-lg);
     padding: var(--card-padding-md);
     box-shadow: var(--shadow-premium);
     transition: all var(--transition-base);
@@ -328,7 +344,7 @@
       hsl(var(--color-secondary) / 0.08), 
       hsl(var(--color-primary) / 0.08));
     z-index: -1;
-    border-radius: var(--radius-2xl);
+    border-radius: var(--radius-lg);
     opacity: 0;
     transition: opacity var(--transition-base);
   }
@@ -343,13 +359,55 @@
     opacity: 1;
   }
 
+  /* Gradient Border Effects */
+  .gradient-border-container {
+    background: linear-gradient(135deg, hsl(var(--color-primary) / 0.9), hsl(var(--color-secondary) / 0.9));
+    border-radius: var(--radius-xl);
+    padding: 2px;
+  }
+
+  .gradient-border-container-modal {
+    background: linear-gradient(135deg, hsl(var(--color-primary) / 0.8), hsl(var(--color-secondary) / 0.8));
+    padding: 1px;
+  }
+
+  .gradient-border-container-input {
+    background: linear-gradient(135deg, hsl(var(--color-primary) / 0.8), hsl(var(--color-secondary) / 0.8));
+    border-radius: var(--radius-md);
+    padding: 1px;
+  }
+
+  .gradient-border-container-tab {
+    background: linear-gradient(135deg, hsl(var(--color-primary) / 0.8), hsl(var(--color-secondary) / 0.8));
+    border-radius: var(--radius-2xl);
+    padding: 1px;
+  }
+
+  .gradient-border-container-desktop-menu {
+    background: linear-gradient(135deg, hsl(var(--color-primary) / 0.8), hsl(var(--color-secondary) / 0.8));
+    border-radius: var(--radius-2xl);
+    padding: 1px;
+  }
+
+  .gradient-border-container-warning {
+    background: linear-gradient(135deg, hsl(var(--color-error) / 0.8), hsl(var(--color-warning) / 0.8));
+    border-radius: var(--radius-lg);
+    padding: 1px;
+  }
+
+  .gradient-border-container-bottom-nav {
+    background: linear-gradient(135deg, hsl(var(--color-primary) / 0.8), hsl(var(--color-secondary) / 0.8));
+    border-radius: var(--radius-xl);
+    padding: 1px;
+  }
+
   /* Enhanced Button System - Unified button style with premium effects */
   .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     font-weight: var(--font-weight-semibold);
-    border-radius: var(--radius-xl);
+    border-radius: var(--radius-lg);
     transition: all var(--transition-base);
     cursor: pointer;
     border: none;
@@ -361,6 +419,8 @@
     letter-spacing: var(--letter-spacing-wide);
     text-transform: uppercase;
     font-size: var(--text-overline);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
 
   .btn::before {
@@ -393,6 +453,7 @@
     background: hsl(var(--color-primary));
     color: hsl(var(--color-background));
     box-shadow: 0 4px 16px hsl(var(--color-primary) / 0.4);
+    border-radius: var(--radius-lg);
   }
 
   .btn-primary:hover:not(:disabled) {
@@ -412,16 +473,17 @@
 
   /* Secondary Button with Border Glow */
   .btn-secondary {
-    background: transparent;
+    background: hsl(var(--color-surface) / 0.7);
     color: hsl(var(--color-primary));
-    border: 2px solid hsl(var(--color-primary) / 0.6);
     box-shadow: 0 2px 12px hsl(var(--color-primary) / 0.15);
+    border: 1px solid hsl(var(--color-primary) / 0.3);
+    border-radius: var(--radius-lg);
   }
 
   .btn-secondary:hover:not(:disabled) {
     background: hsl(var(--color-primary) / 0.15);
-    border-color: hsl(var(--color-primary));
     box-shadow: 0 6px 20px hsl(var(--color-primary) / 0.3), 0 0 15px hsl(var(--color-primary) / 0.2);
+    border-color: hsl(var(--color-primary) / 0.5);
   }
 
   .btn-secondary:hover:not(:disabled)::before {
@@ -437,12 +499,14 @@
   .btn-ghost {
     background: transparent;
     color: hsl(var(--color-foreground));
-    border: none;
+    border: 1px solid hsl(var(--color-foreground) / 0.2);
+    border-radius: var(--radius-lg);
   }
 
   .btn-ghost:hover:not(:disabled) {
     background: hsl(var(--color-card) / 0.7);
     box-shadow: 0 0 12px hsl(var(--color-primary) / 0.2);
+    border-color: hsl(var(--color-primary) / 0.3);
   }
 
   .btn-ghost:hover:not(:disabled)::before {
@@ -458,6 +522,7 @@
     background: hsl(var(--color-error));
     color: white;
     box-shadow: 0 4px 16px hsl(var(--color-error) / 0.4);
+    border-radius: var(--radius-lg);
   }
 
   .btn-danger:hover:not(:disabled) {
@@ -474,8 +539,7 @@
   /* Enhanced Input Fields with Premium Styling */
   .input-field {
     background: hsl(var(--color-surface) / 0.8);
-    border: 2px solid hsl(var(--color-primary) / 0.25);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-md);
     padding: var(--spacing-sm) var(--spacing-md);
     color: hsl(var(--color-foreground));
     font-size: var(--text-body-1);
@@ -488,7 +552,6 @@
   }
 
   .input-field:focus {
-    border-color: hsl(var(--color-primary));
     box-shadow: 0 0 0 3px hsl(var(--color-primary) / 0.2), 0 0 15px hsl(var(--color-primary) / 0.3);
     outline: none;
     background: hsl(var(--color-surface) / 0.9);
@@ -689,7 +752,7 @@
       hsl(var(--color-primary) / 0.05), 
       hsl(var(--color-secondary) / 0.05), 
       hsl(var(--color-primary) / 0.05));
-    border-radius: var(--radius-2xl);
+    border-radius: var(--radius-xl);
     z-index: -1;
     opacity: 0;
     transition: opacity var(--transition-base);

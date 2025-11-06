@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Card } from './ui/Card';
+import { Button } from './ui/Button';
 import type { GameRoom } from '../types/api';
 import { getStakeAsNumber, getStakeLevel } from '../utils/game';
 
@@ -90,23 +91,24 @@ export const EnhancedPokerRoomCard = ({ room, onJoin }: EnhancedPokerRoomCardPro
         </div>
       </div>
 
-      <button
+      <Button
         onClick={() => onJoin(room)}
-        className={`btn-primary w-full ${room.current_players >= room.max_players ? 'opacity-50 cursor-not-allowed' : ''}`}
+        variant="primary"
+        className="w-full"
         disabled={room.current_players >= room.max_players}
       >
         {room.current_players >= room.max_players ? (
-          <span className="flex items-center justify-center gap-2">
+          <>
             <span className="material-icons-round text-lg">lock</span>
             Room Full
-          </span>
+          </>
         ) : (
-          <span className="flex items-center justify-center gap-2">
+          <>
             <span className="material-icons-round text-lg">login</span>
             Join Game
-          </span>
+          </>
         )}
-      </button>
+      </Button>
     </Card>
   );
 };

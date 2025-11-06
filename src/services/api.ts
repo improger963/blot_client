@@ -61,7 +61,8 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       useAuthStore.getState().setUnauthenticated();
       console.error("401 Unauthorized! Сессия завершена.");
-      // Redirect to login page
+      // Only redirect to login if we're not already on the login page
+      // This prevents infinite redirect loops
       if (window.location.pathname !== '/login') {
         window.location.href = '/login';
       }
@@ -69,6 +70,10 @@ api.interceptors.response.use(
     // Добавим обработку 419 ошибки для более ясного логгирования
     if (error.response?.status === 419) {
       console.error("419 CSRF Token Mismatch! Проверьте логику получения CSRF-cookie.");
+      // Only redirect to login if we're not already on the login page
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }

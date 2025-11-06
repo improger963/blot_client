@@ -5,12 +5,19 @@ import { Card } from './ui/Card';
 export const EnhancedProfileHeader = () => {
     const { user } = useAuthStore();
 
-    const stats = [
-        { label: 'Games Played', value: '127', icon: 'sports_esports' },
-        { label: 'Total Winnings', value: '2,450 TON', icon: 'emoji_events' },
-        { label: 'Win Rate', value: '64%', icon: 'trending_up' },
-        { label: 'Current Rank', value: '#42', icon: 'leaderboard' }
-    ];
+    // Determine user status badges
+    const getStatusBadges = () => {
+        const badges = [];
+        if (user?.is_premium) {
+            badges.push({ label: 'Premium', color: 'bg-gradient-to-r from-yellow-500 to-yellow-600' });
+        }
+        if (user?.banned_at) {
+            badges.push({ label: 'Banned', color: 'bg-gradient-to-r from-red-500 to-red-600' });
+        }
+        return badges;
+    };
+
+    const statusBadges = getStatusBadges();
 
     return (
         <Card className="text-center p-8" padding="lg" hoverEffect={true}>
@@ -19,24 +26,20 @@ export const EnhancedProfileHeader = () => {
             </div>
             <h3 className="headline text-white mb-2">{user?.username || 'User'}</h3>
             <p className="body-2 text-lime-400/80 mb-6">Poker Enthusiast</p>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-                {stats.map((stat, index) => (
-                    <motion.div
-                        key={stat.label}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.2 + index * 0.1 }}
-                        className="glass-card p-4 rounded-2xl text-center"
-                    >
-                        <div className="w-10 h-10 mx-auto rounded-xl bg-lime-500/20 flex items-center justify-center text-lime-400 mb-2">
-                            <span className="material-icons-round">{stat.icon}</span>
-                        </div>
-                        <p className="caption text-lime-400/80">{stat.label}</p>
-                        <p className="title text-white">{stat.value}</p>
-                    </motion.div>
-                ))}
-            </div>
+            
+            {/* Status badges */}
+            {statusBadges.length > 0 && (
+                <div className="flex justify-center gap-2 mb-6">
+                    {statusBadges.map((badge, index) => (
+                        <span 
+                            key={index} 
+                            className={`px-3 py-1 rounded-full text-xs font-semibold text-white ${badge.color}`}
+                        >
+                            {badge.label}
+                        </span>
+                    ))}
+                </div>
+            )}
         </Card>
     );
 };

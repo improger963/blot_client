@@ -10,10 +10,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldIcon, LockIcon, XIcon } from './icons';
 import { TextSkeleton, InputSkeleton } from './ui';
 import { GlassCard } from './ui/GlassCard';
+import { useAuthStore } from '../store/authStore';
 
 export const SecuritySettings = () => {
     const [isPinModalOpen, setPinModalOpen] = useState(false);
     const qc = useQueryClient();
+    const { user } = useAuthStore();
 
     const { data: status, isLoading } = useQuery({
         queryKey: ['securityStatus'],
@@ -62,6 +64,17 @@ export const SecuritySettings = () => {
                         </p>
                     </div>
                 </div>
+                
+                {/* User status information */}
+                {user?.banned_at && (
+                    <div className="gradient-border-container-warning rounded-lg mt-4">
+                        <div className="p-3 rounded-lg bg-red-500/20">
+                            <p className="text-sm text-red-400">
+                                ⚠️ Your account is currently banned (Banned at: {new Date(user.banned_at).toLocaleDateString()})
+                            </p>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Управление PIN-кодом */}

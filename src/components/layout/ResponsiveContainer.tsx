@@ -23,7 +23,7 @@ export const ResponsiveContainer = ({
   // Base container classes
   const baseClasses = fluid ? 'w-full' : 'responsive-container';
   
-  // Padding classes
+  // Padding classes using standardized spacing
   const paddingClasses = {
     none: 'p-0',
     xs: 'p-1',
@@ -33,7 +33,7 @@ export const ResponsiveContainer = ({
     xl: 'p-8'
   }[padding];
   
-  // Margin classes
+  // Margin classes using standardized spacing
   const marginClasses = {
     none: 'm-0',
     xs: 'm-1',

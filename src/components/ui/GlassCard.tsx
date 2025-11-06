@@ -18,7 +18,7 @@ export const GlassCard = ({
   padding = 'md',
   elevation = 'medium'
 }: GlassCardProps) => {
-  // Padding classes based on prop
+  // Padding classes based on prop using standardized spacing
   const paddingClasses = {
     none: 'p-0',
     sm: 'p-4',
@@ -34,7 +34,7 @@ export const GlassCard = ({
     high: 'shadow-elevated'
   }[elevation];
 
-  const baseClasses = `glass-card rounded-2xl relative z-10 border border-[hsl(var(--color-primary)/0.1)] ${elevationClasses}`;
+  const baseClasses = `glass-card rounded-xl relative z-10 ${elevationClasses}`;
   
   const hoverClasses = hoverEffect 
     ? 'glass-card-hover' 
@@ -48,9 +48,12 @@ export const GlassCard = ({
     clsx(baseClasses, paddingClasses, hoverClasses, animatedClasses, className)
   );
 
+  // Wrap the card in a gradient border container
   return (
-    <div className={cardClasses}>
-      {children}
+    <div className="gradient-border-container">
+      <div className={cardClasses}>
+        {children}
+      </div>
     </div>
   );
 };

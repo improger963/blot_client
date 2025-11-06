@@ -21,7 +21,7 @@ export const Card = ({
   borderGlow = true,
   elevation = 'medium'
 }: CardProps) => {
-  // Padding classes based on prop
+  // Padding classes based on prop using standardized spacing
   const paddingClasses = {
     none: 'p-0',
     sm: 'p-4',
@@ -38,7 +38,7 @@ export const Card = ({
   }[elevation];
 
   // Base glass card classes with premium effects
-  const baseClasses = `glass-card rounded-2xl relative z-10 ${paddingClasses} ${elevationClasses}`;
+  const baseClasses = `glass-card rounded-xl relative z-10 ${paddingClasses} ${elevationClasses}`;
   
   // Hover effect class
   const hoverClass = hoverEffect ? 'glass-card-hover' : '';
@@ -46,8 +46,8 @@ export const Card = ({
   // Glow effect class
   const glowClass = glowEffect ? 'transition-all duration-300' : '';
   
-  // Border glow effect
-  const borderGlowClass = borderGlow ? 'border border-[hsl(var(--color-primary)/0.1)]' : '';
+  // Gradient border effect - replacing standard border with gradient border
+  const borderGlowClass = borderGlow ? 'gradient-border' : '';
 
   const cardClasses = `${baseClasses} ${hoverClass} ${glowClass} ${borderGlowClass} ${className}`;
 
@@ -55,6 +55,20 @@ export const Card = ({
   const animationStyle = animate ? {
     animation: 'fade-in 0.7s cubic-bezier(0.16, 1, 0.3, 1)'
   } : {};
+
+  // If borderGlow is enabled, wrap the card in a gradient border container
+  if (borderGlow) {
+    return (
+      <div className="gradient-border-container">
+        <div
+          className={cardClasses}
+          style={animationStyle}
+        >
+          {children}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div

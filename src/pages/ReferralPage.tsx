@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 import { UsersIcon, DollarIcon, ShareIcon } from '../components/icons';
 import { CardSkeleton } from '../components/ui/Skeleton';
 import { StatCard, Card } from '../components/ui';
-import type { ReferralActivityItem } from '../types/api';
+import type { ReferralActivityItem, ReferralStatsResponse } from '../types/api';
 import { useAuthStore } from '../store/authStore';
 
 export const ReferralPage = () => {
@@ -47,30 +47,6 @@ export const ReferralPage = () => {
                         </p>
                     </div>
                 )}
-            </motion.div>
-
-            {/* Статистика */}
-            <motion.div 
-                className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-            >
-                <StatCard
-                    label="Invited"
-                    value={referralData?.referral_count.toString() || '0'}
-                    icon={<UsersIcon className="h-5 w-5" />}
-                />
-                <StatCard
-                    label="Earned"
-                    value={referralData?.total_earnings.formatted || '$0.00'}
-                    icon={<DollarIcon className="h-5 w-5" />}
-                />
-                <StatCard
-                    label="Bonus"
-                    value="+10%"
-                    icon={<ShareIcon className="h-5 w-5" />}
-                />
             </motion.div>
 
             {/* Ссылки для приглашения */}

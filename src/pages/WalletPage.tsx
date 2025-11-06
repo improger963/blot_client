@@ -104,39 +104,6 @@ export const WalletPage = () => {
                 </Card>
             </motion.div>
 
-            {/* Quick Stats */}
-            <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-                className="grid grid-cols-2 md:grid-cols-4 gap-4"
-            >
-                <EnhancedStatsCard
-                    icon="account_balance"
-                    label="Total Deposits"
-                    value="1,245 TON"
-                    trend={{ value: 12, period: '24h' }}
-                />
-                <EnhancedStatsCard
-                    icon="trending_down"
-                    label="Total Withdrawals"
-                    value="850 TON"
-                    trend={{ value: -5, period: '24h' }}
-                />
-                <EnhancedStatsCard
-                    icon="sports_esports"
-                    label="Games Played"
-                    value="127"
-                    trend={{ value: 8, period: '24h' }}
-                />
-                <EnhancedStatsCard
-                    icon="emoji_events"
-                    label="Tournaments Won"
-                    value="5"
-                    trend={{ value: 2, period: '24h' }}
-                />
-            </motion.div>
-
             {/* Transaction History */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}

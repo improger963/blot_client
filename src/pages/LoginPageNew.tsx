@@ -22,6 +22,7 @@ export const LoginPageNew = () => {
   const { isAuthenticated } = useAuthStore();
   const { isReady, isTelegramEnv, initData, user: telegramUser } = useTelegram();
   const navigate = useNavigate();
+  const [loginAttempted, setLoginAttempted] = useState(false);
 
   const { mutate: telegramLogin, isPending: isTelegramPending, error: telegramError } = useMutation({
     mutationFn: async (dataToLogin: string) => {
@@ -35,6 +36,8 @@ export const LoginPageNew = () => {
     },
     onError: (error) => {
       console.error("Telegram login error:", error);
+      // Mark login as attempted to prevent infinite loop
+      setLoginAttempted(true);
     }
   });
 
@@ -44,11 +47,13 @@ export const LoginPageNew = () => {
   };
 
   // Автоматически инициируем вход через Telegram, если мы в Telegram окружении
+  // Но only attempt once to prevent infinite loops
   useEffect(() => {
-    if (isTelegramEnv && initData && !isAuthenticated) {
+    if (isTelegramEnv && initData && !isAuthenticated && !loginAttempted) {
+      setLoginAttempted(true);
       telegramLogin(initData);
     }
-  }, [isTelegramEnv, initData, isAuthenticated, telegramLogin]);
+  }, [isTelegramEnv, initData, isAuthenticated, telegramLogin, loginAttempted]);
 
   // Если пользователь уже аутентифицирован, перенаправляем на главную.
   if (isAuthenticated) {
@@ -144,6 +149,22 @@ export const LoginPageNew = () => {
             <div className="glass-card p-4 rounded-xl">
               <p className="body-2 text-lime-400/80 text-center">🎮 Авторизация через Telegram Web App</p>
             </div>
+            
+            {/* Error message if login failed */}
+            {telegramError && loginAttempted && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-4 rounded-xl bg-red-500/10 p-4"
+              >
+                <p className="body-2 text-red-400 text-center">
+                  ❌ Ошибка входа: {telegramError?.message || 'Authentication failed'}
+                </p>
+                <p className="body-2 text-red-400/80 text-center mt-2">
+                  Пожалуйста, обновите страницу или попробуйте позже.
+                </p>
+              </motion.div>
+            )}
           </Card>
         )}
 
@@ -155,8 +176,8 @@ export const LoginPageNew = () => {
           />
         )}
 
-        {/* Отображение ошибки входа */}
-        {telegramError && (
+        {/* Отображение ошибки входа для разработки */}
+        {!isTelegramEnv && telegramError && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

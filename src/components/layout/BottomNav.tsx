@@ -52,11 +52,12 @@ export const BottomNav = () => {
     };
 
     return (
+      <div className="gradient-border-container-bottom-nav">
         <motion.nav
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2 }}
-            className="fixed bottom-0 left-0 right-0 glass-card p-3 z-50 mini-app-container border-t border-[hsl(var(--color-primary)/0.1)]"
+            className="fixed bottom-0 left-0 right-0 glass-card p-3 z-50 mini-app-container"
             style={{ 
                 paddingBottom: 'max(var(--spacing-sm), env(safe-area-inset-bottom))',
                 height: 'var(--nav-height)'
@@ -86,5 +87,6 @@ export const BottomNav = () => {
                 ))}
             </div>
         </motion.nav>
+      </div>
     );
 };

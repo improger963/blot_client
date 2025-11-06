@@ -17,13 +17,11 @@ import { GlassCard } from './ui/GlassCard';
 const Step1Form = ({ config, onSubmit, isLoading, errors }: { config: DepositConfigResponse, onSubmit: SubmitHandler<CreateDepositPayload>, isLoading: boolean, errors: any }) => {
   const { register, handleSubmit, watch, setValue, formState: { errors: formErrors } } = useForm<CreateDepositPayload>({
     defaultValues: {
-      amount: 100,
-      payment_method: config.payment_methods?.[0]?.id || 'ton'
+      amount: 100
     }
   });
   
   const amount = watch('amount');
-  const paymentMethod = watch('payment_method');
   
   // Preset amounts for quick selection
   const presetAmounts = [50, 100, 250, 500, 1000];
@@ -101,60 +99,6 @@ const Step1Form = ({ config, onSubmit, isLoading, errors }: { config: DepositCon
             className="text-sm text-red-400 flex items-center gap-1"
           >
             ⚠️ {formErrors.amount?.message || errors?.amount?.[0]}
-          </motion.p>
-        )}
-      </div>
-
-      {/* Выбор валюты */}
-      <div className="space-y-3">
-        <h4 className="text-xs sm:text-sm font-medium text-white">💱 Deposit Currency</h4>
-        <div className="grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            className={`py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1 sm:gap-2 ${
-              paymentMethod === 'ton'
-                ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-lg'
-                : 'glass-card text-white hover:bg-white/10'
-            }`}
-            onClick={() => {
-              setValue('payment_method', 'ton');
-            }}
-          >
-            <div className="w-6 h-6 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs">T</div>
-            TON
-          </button>
-          <button
-            type="button"
-            className={`py-2 sm:py-3 rounded-lg sm:rounded-xl text-xs sm:text-sm font-medium transition-all flex items-center justify-center gap-1 sm:gap-2 ${
-              paymentMethod === 'usdt'
-                ? 'bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg'
-                : 'glass-card text-white hover:bg-white/10'
-            }`}
-            onClick={() => {
-              setValue('payment_method', 'usdt');
-            }}
-          >
-            <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center text-white text-xs">U</div>
-            USDT TON
-          </button>
-        </div>
-        
-        {/* Hidden select for react-hook-form */}
-        <select
-          id="payment_method"
-          className="hidden"
-          {...register('payment_method')}
-        >
-          <option value="ton">TON</option>
-          <option value="usdt">USDT TON</option>
-        </select>
-        {errors?.payment_method && (
-          <motion.p
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-sm text-red-400 flex items-center gap-1"
-          >
-            ⚠️ {errors?.payment_method?.[0]}
           </motion.p>
         )}
       </div>
